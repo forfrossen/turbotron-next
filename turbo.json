@@ -1,19 +1,26 @@
 {
-  "npmClient": "npm",
-  "pipeline": {
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "daemon": false,
+  "globalDependencies": [".env", "tsconfig.json"],
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
-    },
-    "compile": {
-      "dependsOn": ["^build", "^compile"],
-      "outputs": ["dist/**", ".next/**"]
+      "env": ["DB_FILE_NAME"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {
-      "outputs": []
+      "dependsOn": ["^lint"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
     },
     "dev": {
-      "cache": false
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["DB_FILE_NAME"],
+      "cache": false,
+      "persistent": true
     }
   }
 }

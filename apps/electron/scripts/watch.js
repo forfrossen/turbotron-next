@@ -49,8 +49,9 @@ const setupMainPackageWatcher = ({ config: { server } }) => {
     const protocol = server.https ? "https:" : "http:";
     const host = server.host || "localhost";
     const port = server.port; // Vite searches for and occupies the first free port: 3000, 3001, 3002 and so on
+    const nextPort = 3000;
     const path = "/";
-    process.env.VITE_DEV_SERVER_URL = `${protocol}//${host}:${port}${path}`;
+    process.env.VITE_DEV_SERVER_URL = `${protocol}//${host}:${nextPort}${path}`;
   }
 
   const logger = createLogger(LOG_LEVEL, {
@@ -75,7 +76,7 @@ const setupMainPackageWatcher = ({ config: { server } }) => {
       spawnProcess.stdout.on(
         "data",
         (d) =>
-          d.toString().trim() && logger.warn(d.toString(), { timestamp: true })
+          d.toString().trim() && logger.warn(d.toString(), { timestamp: true }),
       );
       spawnProcess.stderr.on("data", (d) => {
         const data = d.toString().trim();

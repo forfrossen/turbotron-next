@@ -3,20 +3,19 @@ import { join } from "path";
 
 async function createWindow() {
   const browserWindow = new BrowserWindow({
-    show: false, // Use 'ready-to-show' event to show window
+    show: false,
+    backgroundColor: "#000",
+    titleBarStyle: "default",
+    title: "Electron React App",
+    frame: true,
+    fullscreen: true,
     webPreferences: {
-      nativeWindowOpen: true,
-      webviewTag: false, // The webview tag is not recommended. Consider alternatives like iframe or Electron's BrowserView. https://www.electronjs.org/docs/latest/api/webview-tag#warning
+      zoomFactor: 2,
+      webviewTag: false,
       preload: join(__dirname, "../../preload/dist/index.cjs"),
     },
   });
 
-  /**
-   * If you install `show: true` then it can cause issues when trying to close the window.
-   * Use `show: false` and listener events `ready-to-show` to fix these issues.
-   *
-   * @see https://github.com/electron/electron/issues/25012
-   */
   browserWindow.on("ready-to-show", () => {
     browserWindow?.show();
 
@@ -35,14 +34,35 @@ async function createWindow() {
       ? import.meta.env.VITE_DEV_SERVER_URL
       : "https://yerba.ping.gg";
 
+  browserWindow.webContents.session.setPermissionCheckHandler(
+    (webContents, permission, requestingOrigin) => {
+      console.log("Permission check:", permission);
+
+      if (permission === "midi" || permission === "midiSysex") {
+        return true;
+      }
+
+      return false;
+    },
+  );
+
+  browserWindow.webContents.session.setPermissionRequestHandler(
+    (webContents, permission, callback, details) => {
+      console.log("Permission request:", permission);
+
+      if (permission === "midi" || permission === "midiSysex") {
+        callback(true);
+      } else {
+        callback(false);
+      }
+    },
+  );
+
   await browserWindow.loadURL(pageUrl);
 
   return browserWindow;
 }
 
-/**
- * Restore existing BrowserWindow or Create new BrowserWindow
- */
 export async function restoreOrCreateWindow() {
   let window = BrowserWindow.getAllWindows().find((w) => !w.isDestroyed());
 

@@ -1,9 +1,24 @@
 {
-  "extends": "tsconfig/nextjs.json",
+  "extends": "@repo/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "baseUrl": ".",
+    "paths": {
+      "@repo/web/*": ["./*.tsx"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "forceConsistentCasingInFileNames": true
+  },
   "include": [
     "next-env.d.ts",
+    "next.config.mjs",
     "**/*.ts",
     "**/*.tsx",
+    ".next/types/**/*.ts",
     "../electron/layers/preload/exposedInMainWorld.d.ts"
   ],
   "exclude": ["node_modules"]

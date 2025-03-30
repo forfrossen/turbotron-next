@@ -2,24 +2,28 @@
   "name": "turborepo-basic-shared",
   "version": "0.0.0",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
-    "compile": "turbo run compile",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "build": "pnpm turbo build",
+    "start": "turbo dev --env-mode=loose",
+    "compile": "pnpm turbo compile",
+    "lint": "pnpm turbo lint",
+    "format": "pnpm prettier --write \"**/*.{ts,tsx,md}\"",
+    "list-dep-mismatches": "pnpm syncpack list-mismatches",
+    "fix-dep-mismatches": "pnpm syncpack fix-mismatches",
+    "format-package.json": "pnpm syncpack format",
+    "update": "pnpm syncpack update"
   },
   "devDependencies": {
-    "prettier": "^2.5.1",
+    "prettier": "latest",
+    "syncpack": "^13.0.3",
     "turbo": "latest"
   },
-  "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=14.0.0"
-  },
-  "packageManager": "npm@7.5.3"
+  "packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "esbuild",
+      "sharp"
+    ]
+  }
 }
