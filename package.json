@@ -5,6 +5,7 @@
   "scripts": {
     "build": "pnpm turbo build",
     "start": "turbo dev --env-mode=loose",
+    "start-container": "turbo dev-container --env-mode=loose",
     "compile": "pnpm turbo compile",
     "lint": "pnpm turbo lint",
     "format": "pnpm prettier --write \"**/*.{ts,tsx,md}\"",

@@ -21,6 +21,12 @@
       "env": ["DB_FILE_NAME"],
       "cache": false,
       "persistent": true
+    },
+    "dev-container": {
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["DB_FILE_NAME"],
+      "cache": false,
+      "persistent": true
     }
   }
 }
