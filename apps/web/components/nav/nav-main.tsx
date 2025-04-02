@@ -2,11 +2,7 @@
 
 import { ChevronRight, type LucideIcon } from "lucide-react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@repo/ui/components/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@repo/ui/components/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -15,9 +11,8 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
-  SidebarMenuSubItem,
+  SidebarMenuSubItem
 } from "@repo/ui/components/sidebar";
-import Link from "next/link";
 
 interface NavMenuItem {
   title: string;
@@ -36,12 +31,7 @@ export function NavMain({ items }: { items: NavMenuItem[] }) {
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <Collapsible
-            key={item.title}
-            asChild
-            defaultOpen={item.isActive}
-            className="group/collapsible"
-          >
+          <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip={item.title}>
@@ -55,9 +45,9 @@ export function NavMain({ items }: { items: NavMenuItem[] }) {
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <Link href={subItem.url}>
+                        <a href={subItem.url}>
                           <span>{subItem.title}</span>
-                        </Link>
+                        </a>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}

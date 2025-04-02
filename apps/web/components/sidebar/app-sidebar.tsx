@@ -1,6 +1,10 @@
 "use client";
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@repo/ui/components/sidebar";
+import { NavMain } from "@repo/web/components/nav/nav-main";
+import { NavProjects } from "@repo/web/components/nav/nav-projects";
+import { NavUser } from "@repo/web/components/nav/nav-user";
+import { TeamSwitcher } from "@repo/web/components/team-switcher";
 import {
   AudioWaveform,
   BookOpen,
@@ -14,10 +18,6 @@ import {
   SquareTerminal
 } from "lucide-react";
 import * as React from "react";
-import { NavMain } from "../nav/nav-main";
-import { NavProjects } from "../nav/nav-projects";
-import { NavUser } from "../nav/nav-user";
-import { TeamSwitcher } from "../team-switcher";
 
 // This is sample data.
 const data = {
@@ -55,8 +55,8 @@ const data = {
           url: "/"
         },
         {
-          title: "Search",
-          url: "search"
+          title: "Player",
+          url: "/track"
         },
         {
           title: "Status",
@@ -140,8 +140,8 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
-      url: "#",
+      name: "Storybook",
+      url: "http://localhost:6006",
       icon: Frame
     },
     {

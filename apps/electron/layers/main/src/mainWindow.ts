@@ -10,7 +10,7 @@ async function createWindow() {
     frame: true,
     fullscreen: true,
     webPreferences: {
-      zoomFactor: 2,
+      zoomFactor: 0,
       webviewTag: false,
       preload: join(__dirname, "../../preload/dist/index.cjs"),
     },

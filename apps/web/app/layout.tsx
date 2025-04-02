@@ -37,7 +37,7 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback="Loading...">
             <AtomHydratorData />
-            <AppSidebar />
+            <AppSidebar side="left" />
             <SidebarInset>
               <AppHeader />
               {children}

@@ -1,5 +1,5 @@
 {
-  "extends": "@repo/typescript-config/nextjs.json",
+  "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "module": "NodeNext",
     "baseUrl": ".",
@@ -13,6 +13,13 @@
     ],
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["next-env.d.ts", "next.config.mjs", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "next.config.mjs",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "../electron/layers/preload/exposedInMainWorld.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

@@ -12,10 +12,16 @@
     "start": "next start"
   },
   "dependencies": {
+    "@repo/ui": "workspace:*",
+    "@repo/midi-core": "workspace:*",
+    "@xstate/react": "latest",
+    "@react-rxjs/core": "latest",
+    "@react-rxjs/utils": "latest",
     "@next/env": "^15.2.1",
     "@repo/database": "workspace:*",
-    "@repo/ui": "workspace:*",
     "@swc-jotai/debug-label": "latest",
+    "tone": "latest",
+    "@tonejs/midi": "latest",
     "audiosprite": "latest",
     "babel-plugin-react-compiler": "19.0.0-beta-aeaed83-20250323",
     "drizzle-zod": "^0.7.0",
@@ -38,10 +44,13 @@
     "tailwind-merge": "^3.0.1",
     "tailwindcss": "^4.0.6",
     "tailwindcss-animate": "^1.0.7",
+    "wavesurfer.js": "latest",
+    "@wavesurfer/react": "latest",
     "waveform-data": "^4.5.1",
     "webmidi": "latest",
     "xstate": "latest",
-    "zod": "latest"
+    "zod": "latest",
+    "rxjs": "latest"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
