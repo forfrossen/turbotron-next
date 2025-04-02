@@ -1,18 +1,13 @@
-import "dotenv/config";
+import { getEnvVariable } from "#get-env-var";
 import { defineConfig } from "drizzle-kit";
-
-const getEnvVariable = (name: string) => {
-  const value = process.env[name];
-  if (value == null) throw new Error(`environment variable ${name} not found`);
-  return value;
-};
+import path from "path";
 
 export default defineConfig({
   out: "./drizzle",
   dialect: "sqlite",
-  schema: "./src/db/schemas",
+  schema: "src/db/schema.ts",
 
   dbCredentials: {
-    url: getEnvVariable("DB_FILE_NAME"),
-  },
+    url: path.normalize(getEnvVariable("DB_FILE_NAME"))
+  }
 });

@@ -1,3 +1,4 @@
+"use server";
 import { db } from "@repo/database/db";
 import { navItems, navMain, projects, teams, users } from "@repo/database/db/schema";
 import { Sidebar } from "@repo/ui/components/sidebar";
@@ -25,16 +26,11 @@ export async function AppSidebarWithData({
 }: Readonly<{
   props?: React.ComponentProps<typeof Sidebar>;
 }>) {
-  // Get the first user (you can extend this to support multiple users if needed)
   const allUsers = await db.select().from(users);
-
-  // Get all teams
   const allTeams = await db.select().from(teams);
-
-  // Get navMain sections
   const navSections = await db.select().from(navMain);
+  const allProjects = await db.select().from(projects);
 
-  // For each section, get the matching items
   const navMainWithItems = await Promise.all(
     navSections.map(async (section) => {
       const items = await db.select().from(navItems).where(eq(navItems.navMainId, section.id));
@@ -52,10 +48,6 @@ export async function AppSidebarWithData({
     })
   );
 
-  // Get projects
-  const allProjects = await db.select().from(projects);
-
-  // Recreate original structure
   const result: SidebarData = {
     user: allUsers[0] as NavMenuUser,
     teams: allTeams.map((team) => ({

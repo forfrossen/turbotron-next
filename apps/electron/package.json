@@ -28,23 +28,23 @@
     "@electron-toolkit/eslint-config": "^2.0.0",
     "@electron-toolkit/eslint-config-ts": "^3.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "8.29.0",
+    "@typescript-eslint/eslint-plugin": "*",
     "@electron-toolkit/typed-ipc": "latest",
-    "cross-env": "7.0.3",
+    "cross-env": "*",
     "dts-for-context-bridge": "0.7.1",
     "electron": "35.1.2",
     "electron-builder": "26.0.12",
     "electron-devtools-installer": "4.0.0",
-    "eslint": "9.23.0",
+    "eslint": "*",
     "eslint-plugin-vue": "10.0.0",
-    "typescript": "5.8.2",
+    "typescript": "*",
     "vite": "6.2.4"
   },
   "dependencies": {
     "electron-updater": "6.6.2",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react": "*",
+    "react-dom": "*"
   }
 }

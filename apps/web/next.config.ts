@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ["@repo/ui", "jotai-devtools"],
-  experimental: {
-    reactCompiler: true
-  },
+  // experimental: {
+  //   reactCompiler: true
+  // },
   output: "export",
   images: {
     unoptimized: true
