@@ -7,10 +7,9 @@
     "#*": "./src/*.ts"
   },
   "exports": {
-    ".": "./src/database.ts",
+    "./db": "./src/index.ts",
     "./types/*": "./src/db/types/*.ts",
-    "./schemas/*": "./src/db/schemas/*.ts",
-    "./defaults/*": "./src/db/defaults/*.ts"
+    "./db/schema": "./src/db/schema.ts"
   },
   "scripts": {
     "seed": "tsx scripts/seed.ts",

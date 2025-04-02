@@ -7,7 +7,7 @@ import { cn } from "@repo/ui/lib/utils";
 import { AppHeader } from "@repo/web/components/header/app-header";
 import AtomHydratorData from "@repo/web/components/providers/atom-hydrator-data";
 import { Providers } from "@repo/web/components/providers/providers";
-import { AppSidebar } from "@repo/web/components/sidebar/app-sidebar";
+import { AppSidebarWithData } from "@repo/web/components/sidebar/sidebar-data-provider";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -37,9 +37,10 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback="Loading...">
             <AtomHydratorData />
-            <AppSidebar side="left" />
+            <AppSidebarWithData />
             <SidebarInset>
               <AppHeader />
+              Test
               {children}
             </SidebarInset>
           </Suspense>

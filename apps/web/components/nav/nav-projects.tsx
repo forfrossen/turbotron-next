@@ -1,19 +1,13 @@
 "use client";
 
-import {
-  Folder,
-  Forward,
-  MoreHorizontal,
-  Trash2,
-  type LucideIcon,
-} from "lucide-react";
+import { Folder, Forward, MoreHorizontal, Trash2, type LucideIcon } from "lucide-react";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@repo/ui/components/dropdown-menu";
 import {
   SidebarGroup,
@@ -22,19 +16,17 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
+  useSidebar
 } from "@repo/ui/components/sidebar";
 import Link from "next/link";
 
-export function NavProjects({
-  projects,
-}: {
-  projects: {
-    name: string;
-    url: string;
-    icon: LucideIcon;
-  }[];
-}) {
+export type NavMenuProjects = {
+  name: string;
+  url: string;
+  icon: LucideIcon;
+}[];
+
+export function NavProjects({ projects }: { projects: NavMenuProjects }) {
   const { isMobile } = useSidebar();
 
   return (

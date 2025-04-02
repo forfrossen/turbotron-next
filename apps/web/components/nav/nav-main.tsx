@@ -14,7 +14,7 @@ import {
   SidebarMenuSubItem
 } from "@repo/ui/components/sidebar";
 
-interface NavMenuItem {
+export interface NavMenuItem {
   title: string;
   url: string;
   icon?: LucideIcon;
