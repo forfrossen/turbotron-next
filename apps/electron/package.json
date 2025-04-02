@@ -28,7 +28,7 @@
     "@electron-toolkit/eslint-config": "^2.0.0",
     "@electron-toolkit/eslint-config-ts": "^3.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "8.28.0",
+    "@typescript-eslint/eslint-plugin": "8.29.0",
     "@electron-toolkit/typed-ipc": "latest",
     "cross-env": "7.0.3",
     "dts-for-context-bridge": "0.7.1",
@@ -38,7 +38,7 @@
     "eslint": "9.23.0",
     "eslint-plugin-vue": "10.0.0",
     "typescript": "5.8.2",
-    "vite": "6.2.3"
+    "vite": "6.2.4"
   },
   "dependencies": {
     "electron-updater": "6.6.2",
