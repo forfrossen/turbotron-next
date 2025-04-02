@@ -51,6 +51,9 @@ coverage
 # Turbo
 .turbo
 
+#pnpm
+.pnpm-store
+
 # Vercel
 .vercel
 
@@ -69,3 +72,5 @@ npm-debug.log*
 *.pem
 
 storage
+
+*storybook.log

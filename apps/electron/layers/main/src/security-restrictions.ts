@@ -23,9 +23,9 @@ const ALLOWED_ORIGINS_AND_PERMISSIONS = new Map<
     | "unknown"
   >
 >(
-  import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_URL
-    ? [[new URL(import.meta.env.VITE_DEV_SERVER_URL).origin, new Set()]]
-    : []
+  import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_URL ?
+    [[new URL(import.meta.env.VITE_DEV_SERVER_URL).origin, new Set()]]
+  : []
 );
 
 /**
@@ -38,10 +38,12 @@ const ALLOWED_ORIGINS_AND_PERMISSIONS = new Map<
  *   href="https://github.com/"
  * >
  */
-const ALLOWED_EXTERNAL_ORIGINS = new Set<`https://${string}`>([
+const ALLOWED_EXTERNAL_ORIGINS = new Set<`https://${string}` | `http://${string}`>([
   "https://github.com",
   "https://yerba.vercel.app",
   "https://yerba.ping.gg",
+  "http://localhost",
+  "http://localhost:6006"
 ]);
 
 app.on("web-contents-created", (_, contents) => {
@@ -73,21 +75,16 @@ app.on("web-contents-created", (_, contents) => {
    *
    * @see https://www.electronjs.org/docs/latest/tutorial/security#5-handle-session-permission-requests-from-remote-content
    */
-  contents.session.setPermissionRequestHandler(
-    (webContents, permission, callback) => {
-      const { origin } = new URL(webContents.getURL());
+  contents.session.setPermissionRequestHandler((webContents, permission, callback) => {
+    const { origin } = new URL(webContents.getURL());
 
-      const permissionGranted =
-        !!ALLOWED_ORIGINS_AND_PERMISSIONS.get(origin)?.has(permission);
-      callback(permissionGranted);
+    const permissionGranted = !!ALLOWED_ORIGINS_AND_PERMISSIONS.get(origin)?.has(permission);
+    callback(permissionGranted);
 
-      if (!permissionGranted && import.meta.env.DEV) {
-        console.warn(
-          `${origin} requested permission for '${permission}', but was blocked.`
-        );
-      }
+    if (!permissionGranted && import.meta.env.DEV) {
+      console.warn(`${origin} requested permission for '${permission}', but was blocked.`);
     }
-  );
+  });
 
   /**
    * Hyperlinks to allowed sites open in the default browser.
@@ -125,9 +122,7 @@ app.on("web-contents-created", (_, contents) => {
     const { origin } = new URL(params.src);
     if (!ALLOWED_ORIGINS_AND_PERMISSIONS.has(origin)) {
       if (import.meta.env.DEV) {
-        console.warn(
-          `A webview tried to attach ${params.src}, but was blocked.`
-        );
+        console.warn(`A webview tried to attach ${params.src}, but was blocked.`);
       }
 
       event.preventDefault();
