@@ -1,4 +1,5 @@
 "use client";
+import { Subscribe } from "@react-rxjs/core";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { useTrackHeight } from "@repo/web/store/config-store";
 import { PlusIcon } from "lucide-react";
@@ -12,15 +13,17 @@ export const PluginItem = ({ personName, pluginType, ...restProps }: Props) => {
   const trackHeight = useTrackHeight();
 
   return (
-    <Card className="m-2" {...restProps} style={{ height: trackHeight }}>
-      <CardHeader>
-        <CardTitle>{personName}</CardTitle>
-        <CardDescription>{pluginType}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <PlusIcon />
-        <div>Channel: Omni</div>
-      </CardContent>
-    </Card>
+    <Subscribe>
+      <Card className="m-2" {...restProps} style={{ height: trackHeight }}>
+        <CardHeader>
+          <CardTitle>{personName}</CardTitle>
+          <CardDescription>{pluginType}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <PlusIcon />
+          <div>Channel: Omni</div>
+        </CardContent>
+      </Card>
+    </Subscribe>
   );
 };

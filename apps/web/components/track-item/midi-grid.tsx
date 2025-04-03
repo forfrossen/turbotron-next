@@ -1,4 +1,4 @@
-import { useMidiData } from "@repo/web/store/midi-store";
+import { useMidiData } from "@repo/web/store/config-store";
 import React from "react";
 
 const MidiGrid: React.FC = () => {

@@ -1,31 +1,26 @@
 import { bind } from "@react-rxjs/core";
 import { BehaviorSubject } from "rxjs";
 
-export const eventSubject$ = new BehaviorSubject<string>("");
-export const eventSubject = bind(eventSubject$);
-export const useEventSubject = eventSubject[0];
-export const setEventSubject = eventSubject[1];
+export const isReady$ = new BehaviorSubject<boolean>(false);
+export const isReady = bind(isReady$);
+export const useIsReady = isReady[0];
+export const setIsReady = isReady[1];
 
-export const isReadySubject$ = new BehaviorSubject<boolean>(false);
-export const isReadySubject = bind(isReadySubject$);
-export const useIsReadySubject = isReadySubject[0];
-export const setIsReadySubject = isReadySubject[1];
+export const isPlaying$ = new BehaviorSubject<boolean>(false);
+export const isPlaying = bind(isPlaying$);
+export const useIsPlaying = isPlaying[0];
 
-export const isPlayingSubject$ = new BehaviorSubject<boolean>(false);
-export const isPlayingSubject = bind(isPlayingSubject$);
-export const useIsPlayingSubject = isPlayingSubject[0];
+export const wavesurfer$ = new BehaviorSubject<any>(null);
+export const wavesurfer = bind(wavesurfer$);
+export const useWavesurfer = wavesurfer[0];
+export const setWavesurfer = wavesurfer[1];
 
-export const wavesurferSubject$ = new BehaviorSubject<any>(null);
-export const wavesurferSubject = bind(wavesurferSubject$);
-export const useWavesurferSubject = wavesurferSubject[0];
-export const setWavesurferSubject = wavesurferSubject[1];
+export const currentTime$ = new BehaviorSubject<number>(0);
+export const currentTime = bind(currentTime$);
+export const useCurrentTime = currentTime[0];
+export const setCurrentTime = currentTime[1];
 
-export const currentTimeSubject$ = new BehaviorSubject<number>(0);
-export const currentTimeSubject = bind(currentTimeSubject$);
-export const useCurrentTimeSubject = currentTimeSubject[0];
-export const setCurrentTimeSubject = currentTimeSubject[1];
-
-export const durationSubject$ = new BehaviorSubject<number>(0);
-export const durationSubject = bind(durationSubject$);
-export const useDurationSubject = durationSubject[0];
-export const setDurationSubject = durationSubject[1];
+export const duration$ = new BehaviorSubject<number>(0);
+export const duration = bind(duration$);
+export const useDuration = duration[0];
+export const setDuration = duration[1];

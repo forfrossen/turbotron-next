@@ -1,14 +1,13 @@
+import { useLoadedSongUrl, useTrackHeight } from "@repo/web/store/config-store";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useEffect, useRef } from "react";
-import { currentTimeSubject$, isPlayingSubject$, isReadySubject$, wavesurferSubject$ } from "store/transport-store.js";
+import { currentTime$, isPlaying$, isReady$, wavesurfer$ } from "store/transport-store.js";
 
-interface UseWavesurferWithRxJSProps {
-  url: string;
-  waveColor: string;
-  height: number;
-}
-
-export const useWavesurferWithRxJS = ({ url, waveColor, height }: UseWavesurferWithRxJSProps) => {
+export const useWavesurferWithRxJS = () => {
+  const url = useLoadedSongUrl();
+  const trackHeight = useTrackHeight();
+  const waveColor = "purple";
+  const height = parseInt(trackHeight.replace(/rem/g, "")) * 12;
   const containerRef = useRef(null);
 
   const { wavesurfer, isReady, currentTime, isPlaying } = useWavesurfer({
@@ -23,19 +22,19 @@ export const useWavesurferWithRxJS = ({ url, waveColor, height }: UseWavesurferW
   });
 
   useEffect(() => {
-    wavesurferSubject$.next(wavesurfer);
+    wavesurfer$.next(wavesurfer);
   }, [wavesurfer]);
 
   useEffect(() => {
-    isReadySubject$.next(isReady);
+    isReady$.next(isReady);
   }, [isReady]);
 
   useEffect(() => {
-    currentTimeSubject$.next(currentTime);
+    currentTime$.next(currentTime);
   }, [currentTime]);
 
   useEffect(() => {
-    isPlayingSubject$.next(isPlaying);
+    isPlaying$.next(isPlaying);
   }, [isPlaying]);
 
   return {
