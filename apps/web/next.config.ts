@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@repo/ui", "jotai-devtools"],
+  transpilePackages: ["@repo/ui", "jotai-devtools", "@repo/database"],
   // experimental: {
   //   reactCompiler: true
   // },

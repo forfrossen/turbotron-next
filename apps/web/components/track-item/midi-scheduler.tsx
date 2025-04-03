@@ -1,16 +1,15 @@
-import { subscribeToMidiData } from "@repo/web/store/MidiStore";
-import { Midi } from "@tonejs/midi";
+import { useIsPlaying } from "@repo/web/store/config-store";
+import { useMidiData } from "@repo/web/store/midi-store";
 import React from "react";
-import { BehaviorSubject, interval, of, Subscription } from "rxjs";
+import { interval, of, Subscription } from "rxjs";
 import { switchMap, takeWhile } from "rxjs/operators";
 import { WebMidi } from "webmidi";
 
-const isPlaying$ = new BehaviorSubject<boolean>(false);
+const MidiScheduler: React.FC = () => {
+  const isPlaying = useIsPlaying();
+  const midiData = useMidiData();
 
-const MidiScheduler: React.FC<{ isPlaying: boolean }> = ({ isPlaying }) => {
   React.useEffect(() => {
-    isPlaying$.next(isPlaying);
-
     let subscription: Subscription | null = null;
 
     WebMidi.enable()
@@ -22,18 +21,12 @@ const MidiScheduler: React.FC<{ isPlaying: boolean }> = ({ isPlaying }) => {
         }
 
         const startTime = performance.now();
-        let midiData: Midi | null = null;
-
-        const unsubscribeMidi = subscribeToMidiData((data) => {
-          midiData = data;
-        });
-
         subscription = interval(10)
           .pipe(
             switchMap(() => {
-              if (!midiData || !isPlaying$.getValue()) return of(null);
+              if (!midiData || !isPlaying) return of(null);
 
-              const currentTime = (performance.now() - startTime) / 1000; // Convert to seconds
+              const currentTime = (performance.now() - startTime) / 1000;
               return of({ midiData, currentTime });
             }),
             takeWhile((data) => data !== null)

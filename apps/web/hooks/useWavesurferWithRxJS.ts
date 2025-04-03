@@ -1,6 +1,6 @@
 import { useWavesurfer } from "@wavesurfer/react";
-import { useEffect, useRef, useState } from "react";
-import { Subject } from "rxjs";
+import { useEffect, useRef } from "react";
+import { currentTimeSubject$, isPlayingSubject$, isReadySubject$, wavesurferSubject$ } from "store/transport-store.js";
 
 interface UseWavesurferWithRxJSProps {
   url: string;
@@ -10,36 +10,32 @@ interface UseWavesurferWithRxJSProps {
 
 export const useWavesurferWithRxJS = ({ url, waveColor, height }: UseWavesurferWithRxJSProps) => {
   const containerRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const eventSubject = new Subject<string>();
 
-  const { wavesurfer, isReady } = useWavesurfer({
+  const { wavesurfer, isReady, currentTime, isPlaying } = useWavesurfer({
     container: containerRef,
     url,
     waveColor,
-    height
+    height,
+    mediaControls: true
   });
 
   useEffect(() => {
-    if (!wavesurfer) return;
-
-    const subscription = eventSubject.subscribe((event) => {
-      if (event === "playPause") {
-        wavesurfer.playPause();
-        setIsPlaying(wavesurfer.isPlaying());
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    wavesurferSubject$.next(wavesurfer);
   }, [wavesurfer]);
 
-  const onPlayPause = () => {
-    eventSubject.next("playPause");
-  };
+  useEffect(() => {
+    isReadySubject$.next(isReady);
+  }, [isReady]);
+
+  useEffect(() => {
+    currentTimeSubject$.next(currentTime);
+  }, [currentTime]);
+
+  useEffect(() => {
+    isPlayingSubject$.next(isPlaying);
+  }, [isPlaying]);
 
   return {
-    containerRef,
-    isPlaying,
-    onPlayPause
+    containerRef
   };
 };

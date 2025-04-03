@@ -8,7 +8,6 @@ import { NavMenuUser } from "@repo/web/components/nav/nav-user";
 import { AppSidebar } from "@repo/web/components/sidebar/app-sidebar";
 import { NavMenuTeams } from "@repo/web/components/team-switcher";
 import { eq } from "drizzle-orm";
-import * as LucideIcons from "lucide-react";
 
 export type SidebarData = {
   user: NavMenuUser;
@@ -16,10 +15,6 @@ export type SidebarData = {
   navMain: NavMenuItem[];
   projects: NavMenuProjects;
 };
-
-function getIconByName(name: string) {
-  return (LucideIcons[name as keyof typeof LucideIcons] as LucideIcons.LucideIcon) || null;
-}
 
 export async function AppSidebarWithData({
   props
@@ -38,7 +33,7 @@ export async function AppSidebarWithData({
       return {
         title: section.title,
         url: section.url,
-        icon: getIconByName(section.icon),
+        icon: section.icon,
         isActive: !!section.isActive,
         items: items.map((item) => ({
           title: item.title,
@@ -52,14 +47,14 @@ export async function AppSidebarWithData({
     user: allUsers[0] as NavMenuUser,
     teams: allTeams.map((team) => ({
       name: team.name,
-      logo: getIconByName(team.logo),
+      logo: team.logo,
       plan: team.plan
     })),
     navMain: navMainWithItems,
     projects: allProjects.map((project) => ({
       name: project.name,
       url: project.url,
-      icon: getIconByName(project.icon)
+      icon: project.icon
     }))
   };
 

@@ -1,4 +1,4 @@
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@repo/ui/components/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter } from "@repo/ui/components/sidebar";
 import { PluginItem } from "@repo/web/components/track-manager/plugin-item";
 
 type Props = {};
@@ -6,8 +6,8 @@ type Props = {};
 export const TrackManager = (props: Props & React.ComponentProps<typeof Sidebar>) => {
   return (
     <Sidebar className="sticky hidden lg:flex top-0 h-svh border-l" {...props}>
-      <SidebarHeader></SidebarHeader>
-      <SidebarContent>
+      {/* <SidebarHeader></SidebarHeader> */}
+      <SidebarContent className="flex flex-col gap-2">
         <PluginItem personName="Master Track" pluginType="Audio" />
         <PluginItem personName="Basti" pluginType="Kemper" />
       </SidebarContent>

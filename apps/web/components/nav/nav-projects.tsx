@@ -1,6 +1,6 @@
 "use client";
 
-import { Folder, Forward, MoreHorizontal, Trash2, type LucideIcon } from "lucide-react";
+import { Folder, Forward, MoreHorizontal, Trash2 } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -18,12 +18,13 @@ import {
   SidebarMenuItem,
   useSidebar
 } from "@repo/ui/components/sidebar";
-import Link from "next/link";
+import { RenderIcon } from "@repo/web/components/sidebar/get-icon-by-name";
+import Link from "next/link.js";
 
 export type NavMenuProjects = {
   name: string;
   url: string;
-  icon: LucideIcon;
+  icon: string;
 }[];
 
 export function NavProjects({ projects }: { projects: NavMenuProjects }) {
@@ -37,7 +38,7 @@ export function NavProjects({ projects }: { projects: NavMenuProjects }) {
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
               <Link href={item.url}>
-                <item.icon />
+                <RenderIcon icon={item.icon} />
                 <span>{item.name}</span>
               </Link>
             </SidebarMenuButton>

@@ -1,16 +1,12 @@
 "use client";
-import { Subscribe } from "@react-rxjs/core";
-import { Card, CardContent } from "@repo/ui/components/card";
-import MidiGrid from "@repo/web/components/MidiGrid";
-import MidiScheduler from "@repo/web/components/MidiScheduler";
-import { useIsMounted } from "@repo/web/hooks/useIsMounted";
-import { setMidiData, useMidiData } from "@repo/web/store/MidiStore";
+import { Arrangement } from "@repo/web/components/arrangement/arrangement";
+import { TrackItem } from "@repo/web/components/track-item/track-item";
+import { TrackItemMaster } from "@repo/web/components/track-item/track-item-master";
+import { useLoadedSong } from "@repo/web/store/config-store";
+import { setMidiData } from "@repo/web/store/midi-store";
 import { Midi } from "@tonejs/midi";
-import { useWavesurferWithRxJS } from "hooks/useWavesurferWithRxJS.js";
+import { isEmpty, isNil } from "lodash";
 import { useEffect } from "react";
-
-const track = "/tracks/Under_The_Weeping_Willow.mp3";
-const midiTrack = "/tracks/Under_The_Weeping_Willow.mid";
 
 const usePermissionRequester = () => {
   useEffect(() => {
@@ -32,8 +28,14 @@ const usePermissionRequester = () => {
 };
 
 const useLoadMidiFile = () => {
+  const loadedSong = useLoadedSong();
+
   useEffect(() => {
-    fetch(midiTrack)
+    if (!loadedSong) {
+      return;
+    }
+
+    fetch(`${`/tracks/${loadedSong}.mid`}`)
       .then((response) => response.arrayBuffer())
       .then((arrayBuffer) => {
         const midi = new Midi(arrayBuffer);
@@ -46,35 +48,23 @@ const useLoadMidiFile = () => {
 };
 
 export default function Page() {
-  const isMounted = useIsMounted();
-  const midiData = useMidiData();
+  const loadedSong = useLoadedSong();
+  const isLoadedSong = !isNil(loadedSong) && !isEmpty(loadedSong);
   usePermissionRequester();
   useLoadMidiFile();
 
-  const handleMidiParsed = (parsedData: Midi) => {
-    setMidiData(parsedData);
-  };
-
-  const { containerRef, isPlaying, onPlayPause } = useWavesurferWithRxJS({
-    url: track,
-    waveColor: "purple",
-    height: 100
-  });
+  if (!isLoadedSong) {
+    return (
+      <div className="flex flex-col w-full mx-2 gap-2">
+        <div className="text-center">Please select a song</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 m-4">
-      <Card className="m-4">
-        <CardContent className="m-2">
-          <div ref={containerRef} />
-          <div className="container mx-auto p-4">
-            <Subscribe>
-              <MidiGrid />
-              <MidiScheduler isPlaying={isPlaying} />
-              <button onClick={() => onPlayPause()}>{isPlaying ? "Stop" : "Play"}</button>
-            </Subscribe>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <Arrangement>
+      <TrackItemMaster />
+      <TrackItem trackId={"Basti"} />
+    </Arrangement>
   );
 }

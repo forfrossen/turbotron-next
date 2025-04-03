@@ -1,4 +1,4 @@
-import { setMidiData } from "@repo/web/store/MidiStore";
+import { setMidiData } from "@repo/web/store/midi-store";
 import { Midi } from "@tonejs/midi";
 import React, { useState } from "react";
 import { from, of } from "rxjs";

@@ -40,7 +40,6 @@ export default function RootLayout({
             <AppSidebarWithData />
             <SidebarInset>
               <AppHeader />
-              Test
               {children}
             </SidebarInset>
           </Suspense>
