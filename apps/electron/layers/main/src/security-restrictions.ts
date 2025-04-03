@@ -1,31 +1,24 @@
 import { app, shell } from "electron";
 import { URL } from "url";
+import { ElectronPermissionMap, ElectronPermissionSet } from "../../../types/permissions";
 
 /**
  * List of origins that you allow open INSIDE the application and permissions for each of them.
  *
  * In development mode you need allow open `VITE_DEV_SERVER_URL`
  */
-const ALLOWED_ORIGINS_AND_PERMISSIONS = new Map<
-  string,
-  Set<
-    | "clipboard-read"
-    | "media"
-    | "display-capture"
-    | "mediaKeySystem"
-    | "geolocation"
-    | "notifications"
-    | "midi"
-    | "midiSysex"
-    | "pointerLock"
-    | "fullscreen"
-    | "openExternal"
-    | "unknown"
-  >
->(
-  import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_URL ?
-    [[new URL(import.meta.env.VITE_DEV_SERVER_URL).origin, new Set()]]
-  : []
+const NEEDED_PERMISSIONS: ElectronPermissionSet = new Set([
+  "media", "midi", "midiSysex"]);
+
+const ALLOWED_ORIGINS_AND_PERMISSIONS: ElectronPermissionMap = new Map(
+  import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_URL
+    ? [
+        [new URL(import.meta.env.VITE_DEV_SERVER_URL).origin, NEEDED_PERMISSIONS],
+        [new URL("http://localhost:3000").origin, NEEDED_PERMISSIONS],
+        [new URL("http://localhost").origin, NEEDED_PERMISSIONS],
+        [new URL("http://localhost:6006").origin, NEEDED_PERMISSIONS],
+      ]
+    : []
 );
 
 /**
@@ -43,7 +36,8 @@ const ALLOWED_EXTERNAL_ORIGINS = new Set<`https://${string}` | `http://${string}
   "https://yerba.vercel.app",
   "https://yerba.ping.gg",
   "http://localhost",
-  "http://localhost:6006"
+  "http://localhost:3000",
+  "http://localhost:6006",
 ]);
 
 app.on("web-contents-created", (_, contents) => {

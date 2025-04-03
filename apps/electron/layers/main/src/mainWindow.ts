@@ -10,6 +10,9 @@ async function createWindow() {
     frame: true,
     fullscreen: true,
     webPreferences: {
+      enableBlinkFeatures: "Midi, MidiSysex", // Enable Web MIDI API
+      contextIsolation: true,
+      nodeIntegration: true,
       zoomFactor: 0,
       webviewTag: false,
       preload: join(__dirname, "../../preload/dist/index.cjs"),
@@ -34,29 +37,32 @@ async function createWindow() {
       ? import.meta.env.VITE_DEV_SERVER_URL
       : "https://yerba.ping.gg";
 
-  browserWindow.webContents.session.setPermissionCheckHandler(
-    (webContents, permission, requestingOrigin) => {
-      console.log("Permission check:", permission);
+      browserWindow.webContents.session.setPermissionCheckHandler(
+        (webContents, permission, requestingOrigin) => {
+          console.log(`Permission check for: ${permission}, Origin: ${requestingOrigin}`);
 
-      if (permission === "midi" || permission === "midiSysex") {
-        return true;
-      }
+          if (permission === "midi" || permission === "midiSysex") {
+            console.log("Permission granted for MIDI access.");
+            return true;
+          }
+          console.log("Permission denied for:", permission);
+          return false;
+        },
+      );
 
-      return false;
-    },
-  );
+      browserWindow.webContents.session.setPermissionRequestHandler(
+        (webContents, permission, callback, details) => {
+          console.log(`Permission request for: ${permission}, Details:`, details);
 
-  browserWindow.webContents.session.setPermissionRequestHandler(
-    (webContents, permission, callback, details) => {
-      console.log("Permission request:", permission);
-
-      if (permission === "midi" || permission === "midiSysex") {
-        callback(true);
-      } else {
-        callback(false);
-      }
-    },
-  );
+          if (permission === "midi" || permission === "midiSysex") {
+            console.log("Permission granted for MIDI access.");
+            callback(true);
+          } else {
+            console.log("Permission denied for:", permission);
+            callback(false);
+          }
+        },
+      );
 
   await browserWindow.loadURL(pageUrl);
 

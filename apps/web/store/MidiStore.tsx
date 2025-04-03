@@ -1,17 +1,22 @@
+import { bind } from "@react-rxjs/core";
 import { Midi } from "@tonejs/midi";
 import { BehaviorSubject } from "rxjs";
 
-const midiSubject = new BehaviorSubject<Midi | null>(null);
+export const midiSubject$ = new BehaviorSubject<Midi | null>(null);
+
+export const midiDataBinder = bind(midiSubject$, null);
+export const useMidiData = midiDataBinder[0];
 
 export const setMidiData = (data: Midi): void => {
-  midiSubject.next(data);
-};
-
-export const getMidiData = (): Midi | null => {
-  return midiSubject.getValue();
+  if (!data) {
+    console.error("Invalid MIDI data:", data);
+    return;
+  }
+  console.log("Setting MIDI data:", data);
+  midiSubject$.next(data);
 };
 
 export const subscribeToMidiData = (callback: (data: Midi | null) => void): (() => void) => {
-  const subscription = midiSubject.subscribe(callback);
+  const subscription = midiSubject$.subscribe(callback);
   return () => subscription.unsubscribe();
 };

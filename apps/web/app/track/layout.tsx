@@ -7,8 +7,10 @@ export default function TrackLayout({
 }>) {
   return (
     <>
-      <TrackManager side="left" />
-      {children}
+      <div className="flex flex-1 flex-row gap-4">
+        <TrackManager side="left" />
+        {children}
+      </div>
     </>
   );
 }

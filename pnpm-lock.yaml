@@ -12,7 +12,7 @@ importers:
         specifier: latest
         version: 3.5.3
       syncpack:
-        specifier: ^13.0.3
+        specifier: latest
         version: 13.0.3(typescript@5.8.2)
       turbo:
         specifier: latest
