@@ -16,7 +16,10 @@ export const useWavesurferWithRxJS = ({ url, waveColor, height }: UseWavesurferW
     url,
     waveColor,
     height,
-    mediaControls: true
+    autoCenter: true,
+    barGap: 2,
+    interact: true,
+    dragToSeek: true
   });
 
   useEffect(() => {
