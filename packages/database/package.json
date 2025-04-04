@@ -12,11 +12,11 @@
     "./db/schema": "./src/db/schema.ts"
   },
   "scripts": {
-    "seed": "tsx scripts/seed.ts",
-    "migrate": "drizzle-kit migrate --config=drizzle.config.ts ",
-    "studio": "drizzle-kit studio --config=drizzle.config.ts ",
-    "generate": "drizzle-kit generate --config=drizzle.config.ts ",
-    "push": "drizzle-kit push --config=drizzle.config.ts && pnpm run seed"
+    "seed": "pnpm tsx scripts/seed.ts",
+    "migrate": "pnpm drizzle-kit migrate --config=drizzle.config.ts ",
+    "studio": "pnpm drizzle-kit studio --config=drizzle.config.ts ",
+    "generate": "pnpm drizzle-kit generate --config=drizzle.config.ts ",
+    "push": "pnpm drizzle-kit push --config=drizzle.config.ts && pnpm run seed"
   },
   "dependencies": {
     "@libsql/client": "latest",

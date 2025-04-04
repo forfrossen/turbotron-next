@@ -1,3 +1,4 @@
+import { SidebarInset } from "@repo/ui/components/sidebar";
 import { TrackManager } from "@repo/web/components/track-manager/track-manager";
 
 export default function TrackLayout({
@@ -6,10 +7,9 @@ export default function TrackLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-1 flex-row gap-4">
+    <div className="sticky flex flex-1 flex-row gap-4">
       <TrackManager side="left" />
-      {children}
-      {/* <Transport /> */}
+      <SidebarInset>{children}</SidebarInset>
     </div>
   );
 }

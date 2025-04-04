@@ -5,7 +5,8 @@ import defaultConfig from "@repo/prettier-config";
  */
 
 const config = {
-  ...defaultConfig
+  ...defaultConfig,
+  printWidth: 220
 };
 
 export default config;
