@@ -7,12 +7,13 @@
     "#*": "./src/*.ts"
   },
   "exports": {
-    "./db": "./src/index.ts",
+    ".": "./src/index.ts",
+    "./db/*": "./src/db/*.ts",
     "./types/*": "./src/db/types/*.ts",
     "./db/schema": "./src/db/schema.ts"
   },
   "scripts": {
-    "seed": "pnpm tsx scripts/seed.ts",
+    "seed": "pnpm tsx ./src/seed.ts",
     "migrate": "pnpm drizzle-kit migrate --config=drizzle.config.ts ",
     "studio": "pnpm drizzle-kit studio --config=drizzle.config.ts ",
     "generate": "pnpm drizzle-kit generate --config=drizzle.config.ts ",

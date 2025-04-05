@@ -3,14 +3,17 @@ import { db } from "#index";
 
 export async function seedNavMenu() {
   // Seed user
-  const [user] = await db.insert(users).values({ name: "shadcn", email: "m@example.com", avatar: "/avatars/shadcn.jpg" }).returning();
+  const [user] = await db.insert(users).values({ name: "shadcn", email: "m@example.com", avatar: "/avatars/shadcn.jpg" }).onConflictDoNothing().returning();
 
   // Seed teams
-  await db.insert(teams).values([
-    { name: "Acme Inc", logo: "GalleryVerticalEnd", plan: "Enterprise" },
-    { name: "Acme Corp.", logo: "AudioWaveform", plan: "Startup" },
-    { name: "Evil Corp.", logo: "Command", plan: "Free" }
-  ]);
+  await db
+    .insert(teams)
+    .values([
+      { name: "Acme Inc", logo: "GalleryVerticalEnd", plan: "Enterprise" },
+      { name: "Acme Corp.", logo: "AudioWaveform", plan: "Startup" },
+      { name: "Evil Corp.", logo: "Command", plan: "Free" }
+    ])
+    .onConflictDoNothing();
 
   // Seed navMain + navItems
   const navMainData = [
@@ -73,23 +76,30 @@ export async function seedNavMenu() {
         icon: section.icon,
         isActive: section.isActive
       })
+      .onConflictDoNothing()
       .returning();
 
-    await db.insert(navItems).values(
-      section.items.map((item) => ({
-        navMainId: nav?.id ?? 0,
-        title: item.title,
-        url: item.url
-      }))
-    );
+    await db
+      .insert(navItems)
+      .values(
+        section.items.map((item) => ({
+          navMainId: nav?.id ?? 0,
+          title: item.title,
+          url: item.url
+        }))
+      )
+      .onConflictDoNothing();
   }
 
   // Seed projects
-  await db.insert(projects).values([
-    { name: "Storybook", url: "http://localhost:6006", icon: "Frame" },
-    { name: "Sales & Marketing", url: "#", icon: "PieChart" },
-    { name: "Travel", url: "#", icon: "Map" }
-  ]);
+  await db
+    .insert(projects)
+    .values([
+      { name: "Storybook", url: "http://localhost:6006", icon: "Frame" },
+      { name: "Sales & Marketing", url: "#", icon: "PieChart" },
+      { name: "Travel", url: "#", icon: "Map" }
+    ])
+    .onConflictDoNothing();
 
   console.log("✅ Seed NavMenu complete!");
 }

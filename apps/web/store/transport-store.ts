@@ -1,5 +1,6 @@
 import { bind } from "@react-rxjs/core";
 import { BehaviorSubject } from "rxjs";
+import WaveSurfer from "wavesurfer.js";
 
 export const isReady$ = new BehaviorSubject<boolean>(false);
 export const isReady = bind(isReady$);
@@ -10,7 +11,7 @@ export const isPlaying$ = new BehaviorSubject<boolean>(false);
 export const isPlaying = bind(isPlaying$);
 export const useIsPlaying = isPlaying[0];
 
-export const wavesurfer$ = new BehaviorSubject<any>(null);
+export const wavesurfer$ = new BehaviorSubject<WaveSurfer | null>(null);
 export const wavesurfer = bind(wavesurfer$);
 export const useWavesurfer = wavesurfer[0];
 export const setWavesurfer = wavesurfer[1];

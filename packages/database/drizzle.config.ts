@@ -1,6 +1,5 @@
 import { getEnvVariable } from "#utils/get-env-var";
 import { defineConfig } from "drizzle-kit";
-import path from "path";
 
 export default defineConfig({
   out: "./drizzle",
@@ -8,6 +7,6 @@ export default defineConfig({
   schema: "src/db/schema.ts",
 
   dbCredentials: {
-    url: path.normalize(getEnvVariable("DB_FILE_NAME"))
+    url: getEnvVariable("DB_FILE_NAME")
   }
 });

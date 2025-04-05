@@ -1,10 +1,30 @@
+"use client";
 import { useMidiData } from "@repo/web/store/config-store";
-import React from "react";
+import { addCcRegions } from "components/track-item/utils/create-regions.js";
+import { isNil } from "lodash";
+import React, { useEffect } from "react";
+import { useWavesurfer } from "store/transport-store.js";
 
 const MidiGrid: React.FC = () => {
   const midiData = useMidiData();
+
   const trackIndex = 0; // Assuming you want to display the first track
   const track = midiData?.tracks[trackIndex];
+  const controlChanges = track?.controlChanges;
+  const notes = track?.notes;
+  const wavesurfer = useWavesurfer();
+
+  useEffect(() => {
+    if (!wavesurfer) return;
+    if (!track) return;
+    console.log("track", track);
+
+    wavesurfer.on("decode", () => {
+      if (isNil(controlChanges)) return;
+
+      addCcRegions(controlChanges, wavesurfer);
+    });
+  }, [controlChanges, track, wavesurfer]);
 
   if (!midiData) {
     return <p>No MIDI data loaded.</p>;
@@ -12,6 +32,10 @@ const MidiGrid: React.FC = () => {
 
   if (!track) {
     return <p>No track data available.</p>;
+  }
+
+  if (!wavesurfer) {
+    return <p>Wavesurfer not initialized.</p>;
   }
 
   return (

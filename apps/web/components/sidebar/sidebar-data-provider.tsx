@@ -1,5 +1,5 @@
 "use server";
-import { db } from "@repo/database/db";
+import { db } from "@repo/database";
 import { navItems, navMain, projects, teams, users } from "@repo/database/db/schema";
 import { Sidebar } from "@repo/ui/components/sidebar";
 import { NavMenuItem } from "@repo/web/components/nav/nav-main";

@@ -1,12 +1,12 @@
 import { bind } from "@react-rxjs/core";
-import { BehaviorSubject, catchError, switchMap } from "rxjs";
+import { BehaviorSubject, catchError } from "rxjs";
 import {
   fetchFromUrl,
-  getBufferFromRes,
-  getMidiUrl,
-  getSongUrl,
   handleError,
-  parseMidiFromBuffer
+  parseMidiFromBuffer,
+  stringToMidiUrl,
+  stringToSongUrl,
+  toArrayBuffer
 } from "utils/fetch-midi-by-song-name.js";
 
 export const trackHeight$ = new BehaviorSubject<string>("30rem");
@@ -19,7 +19,7 @@ export const loadedSongBinder = bind(loadedSong$);
 export const useLoadedSong = loadedSongBinder[0];
 export const setLoadedSong = (song: string): void => loadedSong$.next(song);
 
-export const loadedSongUrl$ = loadedSong$.pipe(getSongUrl);
+export const loadedSongUrl$ = loadedSong$.pipe(stringToSongUrl);
 export const loadedSongUrlBinder = bind(loadedSongUrl$);
 export const useLoadedSongUrl = loadedSongUrlBinder[0];
 
@@ -29,9 +29,9 @@ export const useIsPlaying = isPlayingBinder[0];
 export const setIsPlaying = (isPlaying: boolean): void => isPlaying$.next(isPlaying);
 
 export const loadedMidi$ = loadedSong$.pipe(
-  getMidiUrl,
-  switchMap(fetchFromUrl),
-  getBufferFromRes,
+  stringToMidiUrl,
+  fetchFromUrl,
+  toArrayBuffer,
   parseMidiFromBuffer,
   catchError(handleError)
 );

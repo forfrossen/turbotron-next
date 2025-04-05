@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ["@repo/ui", "jotai-devtools", "@repo/database"],
+  serverExternalPackages: ["thread-stream", "pino", "pino-worker", "pino-file", "pino-pretty"],
   experimental: {
-    reactCompiler: true,
-    serverComponentsExternalPackages: ["thread-stream", "pino", "pino-worker", "pino-file", "pino-pretty"]
+    reactCompiler: true
   },
   output: "export",
   images: {
