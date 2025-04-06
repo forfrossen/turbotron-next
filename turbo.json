@@ -2,12 +2,16 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
   "daemon": false,
-  "globalDependencies": [".env", "tsconfig.json"],
+  "globalDependencies": [".env.default", ".env.local", "tsconfig.json"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "env": ["DB_FILE_NAME"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["DATABASE_URL"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/.env.default",
+        "$TURBO_ROOT$/.env.local"
+      ],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {
@@ -17,16 +21,56 @@
       "dependsOn": ["^check-types"]
     },
     "dev": {
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "env": ["DB_FILE_NAME"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/.env.default",
+        "$TURBO_ROOT$/.env.local"
+      ],
+      "env": ["DATABASE_URL"],
       "cache": false,
       "persistent": true
     },
     "dev-container": {
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "env": ["DB_FILE_NAME"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/.env.default",
+        "$TURBO_ROOT$/.env.local"
+      ],
+      "env": ["DATABASE_URL"],
       "cache": false,
       "persistent": true
+    },
+    "db:migrate": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/.env.default",
+        "$TURBO_ROOT$/.env.local"
+      ],
+      "env": ["DATABASE_URL"],
+      "cache": false,
+      "outputs": []
+    },
+    "db:seed": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/.env.default",
+        "$TURBO_ROOT$/.env.local"
+      ],
+      "env": ["DATABASE_URL"],
+      "cache": false,
+      "outputs": []
+    },
+    "db:push": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/.env.default",
+        "$TURBO_ROOT$/.env.local"
+      ],
+      "passThroughEnv": ["DATABASE_URL", "*"],
+      "env": ["NODE_ENV", "DATABASE_URL", "*"],
+      "cache": false,
+      "dependsOn": ["^db:push"],
+      "outputs": []
     }
   }
 }

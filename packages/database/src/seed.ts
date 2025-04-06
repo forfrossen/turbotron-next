@@ -1,9 +1,10 @@
 import { seedMidiDevices } from "#seed/midiDevices";
 import { seedMidiGroups } from "#seed/midiGroups";
 import { seedMidiMappingsForKemper } from "#seed/midiMappingsKemper";
+import { seedNavMenu } from "#seed/navMenu";
 
 export async function seed() {
-  // await seedNavMenu();
+  await seedNavMenu();
   await seedMidiDevices();
   await seedMidiMappingsForKemper();
   await seedMidiGroups();

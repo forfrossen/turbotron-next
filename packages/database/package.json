@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "imports": {
-    "#*": "./src/*.ts"
+    "#*": "./src/*.ts",
+    "#scripts/*": "./scripts/*.ts"
   },
   "exports": {
     ".": "./src/index.ts",
@@ -14,10 +15,10 @@
   },
   "scripts": {
     "seed": "pnpm tsx ./src/seed.ts",
-    "migrate": "pnpm drizzle-kit migrate --config=drizzle.config.ts ",
-    "studio": "pnpm drizzle-kit studio --config=drizzle.config.ts ",
-    "generate": "pnpm drizzle-kit generate --config=drizzle.config.ts ",
-    "push": "pnpm drizzle-kit push --config=drizzle.config.ts && pnpm run seed"
+    "db:migrate": "pnpm drizzle-kit migrate --config=drizzle.config.ts ",
+    "db:studio": "pnpm drizzle-kit studio --config=drizzle.config.ts ",
+    "db:generate": "pnpm drizzle-kit generate --config=drizzle.config.ts ",
+    "db:push": "pnpm drizzle-kit push --config=drizzle.config.ts && pnpm run seed"
   },
   "dependencies": {
     "@libsql/client": "latest",
