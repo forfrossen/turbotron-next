@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#*": "*.{js,ts,jsx,tsx}"
+  },
   "scripts": {
     "build": "next build",
     "clean": "rimraf node_modules && rimraf .next",
     "dev": "cross-env NODE_OPTIONS=--max-old-space-size=8192 next dev --turbopack",
-    "dev-container": "pnpm run dev",
     "dev:inspect": "cross-env NODE_OPTIONS='--inspect' next dev --turbopack",
     "lint": "next lint",
     "start": "next start"
@@ -20,7 +22,6 @@
     "@react-rxjs/utils": "latest",
     "@next/env": "^15.2.1",
     "@repo/database": "workspace:*",
-    "@swc-jotai/debug-label": "latest",
     "tone": "latest",
     "@tonejs/midi": "latest",
     "audiosprite": "latest",
@@ -29,10 +30,6 @@
     "drizzle-orm": "latest",
     "geist": "*",
     "immer": "^10.1.1",
-    "jotai": "latest",
-    "jotai-devtools": "^0.11.0",
-    "jotai-immer": "^0.4.1",
-    "jotai-xstate": "latest",
     "konva": "^9.3.20",
     "lodash": "*",
     "lucide-react": "0.487.0",
@@ -60,7 +57,6 @@
     "@repo/prettier-config": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@swc-jotai/react-refresh": "^0.3.0",
     "@tailwindcss/postcss": "^4",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/lodash": "latest",

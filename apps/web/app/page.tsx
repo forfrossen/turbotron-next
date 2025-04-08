@@ -1,6 +1,6 @@
 "use client";
+import { useIsMounted } from "#hooks/useIsMounted";
 import { Card, CardContent, CardTitle } from "@repo/ui/components/card";
-import { useIsMounted } from "@repo/web/hooks/useIsMounted";
 
 export default function Page() {
   const isMounted = useIsMounted();

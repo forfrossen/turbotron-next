@@ -1,7 +1,7 @@
 "use client";
 
-import { usePermissionRequester } from "@repo/web/hooks/usePermissionRequester";
-import { useLoadedSong } from "@repo/web/store/config-store";
+import { usePermissionRequester } from "#hooks/usePermissionRequester";
+import { useLoadedSong } from "#store/config-store";
 import { isNil } from "lodash";
 
 export const Arrangement = ({

@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@repo/ui/components/button";
-import { useIsMounted } from "@repo/web/hooks/useIsMounted";
+import { useIsMounted } from "#hooks/useIsMounted";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -15,13 +15,10 @@ export const ThemeChanger = () => {
   return (
     <>
       <div>Current theme: {mounted && resolvedTheme}</div>
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={handleToggleTheme}
-        title="toggle dark mode"
-      >
-        {mounted && resolvedTheme === "dark" ? <Sun /> : <Moon />}
+      <Button variant="outline" size="icon" onClick={handleToggleTheme} title="toggle dark mode">
+        {mounted && resolvedTheme === "dark" ?
+          <Sun />
+        : <Moon />}
       </Button>
     </>
   );

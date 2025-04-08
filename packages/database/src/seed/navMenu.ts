@@ -1,17 +1,17 @@
-import { navItems, navMain, projects, teams, users } from "#db/nav";
+import { navItems, navMain, projects, teams, users } from "#db/schema";
 import { db } from "#index";
 
 export async function seedNavMenu() {
   // Seed user
-  const [user] = await db.insert(users).values({ name: "shadcn", email: "m@example.com", avatar: "/avatars/shadcn.jpg" }).onConflictDoNothing().returning();
+  await db.insert(users).values({ name: "Admin", email: "admin@band.com", avatar: "/avatars/shadcn.jpg" }).onConflictDoNothing().returning();
 
   // Seed teams
   await db
     .insert(teams)
     .values([
-      { name: "Acme Inc", logo: "GalleryVerticalEnd", plan: "Enterprise" },
-      { name: "Acme Corp.", logo: "AudioWaveform", plan: "Startup" },
-      { name: "Evil Corp.", logo: "Command", plan: "Free" }
+      { name: "Acme Inc", logo: "GalleryVerticalEnd", plan: "Enterprise", userId: 1 },
+      { name: "Acme Corp.", logo: "AudioWaveform", plan: "Startup", userId: 1 },
+      { name: "Evil Corp.", logo: "Command", plan: "Free", userId: 1 }
     ])
     .onConflictDoNothing();
 
@@ -24,10 +24,7 @@ export async function seedNavMenu() {
       isActive: true,
       items: [
         { title: "Home", url: "/" },
-        { title: "Player", url: "/track" },
-        { title: "Status", url: "status" },
-        { title: "BullBoard", url: "/api/queues" },
-        { title: "Config", url: "config" }
+        { title: "Player", url: "/track" }
       ]
     },
     {
@@ -95,9 +92,9 @@ export async function seedNavMenu() {
   await db
     .insert(projects)
     .values([
-      { name: "Storybook", url: "http://localhost:6006", icon: "Frame" },
-      { name: "Sales & Marketing", url: "#", icon: "PieChart" },
-      { name: "Travel", url: "#", icon: "Map" }
+      { name: "Storybook", url: "http://localhost:6006", icon: "Frame", userId: 1, teamId: 1 },
+      { name: "Sales & Marketing", url: "#", icon: "PieChart", userId: 1, teamId: 1 },
+      { name: "Travel", url: "#", icon: "Map", userId: 1, teamId: 1 }
     ])
     .onConflictDoNothing();
 

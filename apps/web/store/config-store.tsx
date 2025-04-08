@@ -1,5 +1,5 @@
 import { bind } from "@react-rxjs/core";
-import { BehaviorSubject, catchError } from "rxjs";
+import { BehaviorSubject, catchError, map } from "rxjs";
 import {
   fetchFromUrl,
   handleError,
@@ -22,6 +22,13 @@ export const setLoadedSong = (song: string): void => loadedSong$.next(song);
 export const loadedSongUrl$ = loadedSong$.pipe(stringToSongUrl);
 export const loadedSongUrlBinder = bind(loadedSongUrl$);
 export const useLoadedSongUrl = loadedSongUrlBinder[0];
+
+const mapSongToName = () =>
+  map((song: string) => (song.split("/").pop() || "").replace(/_/g, " ").replace(/\.[^/.]+$/, ""));
+
+const humanReadableSongName$ = loadedSong$.pipe(mapSongToName());
+const humanReadableSongNameBinder = bind(humanReadableSongName$, "");
+export const useHumanReadableSongName = humanReadableSongNameBinder[0];
 
 export const isPlaying$ = new BehaviorSubject<boolean>(false);
 export const isPlayingBinder = bind(isPlaying$, false);

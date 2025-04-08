@@ -1,8 +1,8 @@
 import { Subscribe } from "@react-rxjs/core";
 import { Card, CardContent } from "@repo/ui/components/card";
-import MidiGrid from "@repo/web/components/track-item/midi-grid";
-import MidiScheduler from "@repo/web/components/track-item/midi-scheduler";
-import { useTrackHeight } from "@repo/web/store/config-store";
+import MidiGrid from "#components/track-item/midi-grid";
+import MidiScheduler from "#components/track-item/midi-scheduler";
+import { useTrackHeight } from "#store/config-store";
 
 type Props = {
   trackId: string;

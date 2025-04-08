@@ -13,7 +13,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem
 } from "@repo/ui/components/sidebar";
-import { RenderIcon } from "@repo/web/components/sidebar/get-icon-by-name";
+import { RenderIcon } from "#components/sidebar/get-icon-by-name";
 import Link from "next/link.js";
 
 export interface NavMenuItem {

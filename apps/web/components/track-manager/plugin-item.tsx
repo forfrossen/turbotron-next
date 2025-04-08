@@ -1,7 +1,7 @@
 "use client";
 import { Subscribe } from "@react-rxjs/core";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/card";
-import { useTrackHeight } from "@repo/web/store/config-store";
+import { useTrackHeight } from "#store/config-store";
 import { PlusIcon } from "lucide-react";
 
 type Props = {

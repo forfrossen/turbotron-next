@@ -2,7 +2,6 @@
 import "@repo/ui/globals.css";
 
 import { SidebarProvider } from "@repo/ui/components/sidebar";
-import { JotaiStoreProvider } from "@repo/web/components/providers/jotai-store-provider";
 import { ThemeProvider } from "next-themes";
 
 export const Providers = ({
@@ -12,9 +11,7 @@ export const Providers = ({
 }>) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-      <JotaiStoreProvider>
-        <SidebarProvider>{children}</SidebarProvider>
-      </JotaiStoreProvider>
+      <SidebarProvider>{children}</SidebarProvider>
     </ThemeProvider>
   );
 };

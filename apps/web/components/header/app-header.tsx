@@ -1,5 +1,7 @@
 "use client";
 
+import { ThemeChanger } from "#components/theme-changer/theme-changer";
+import { useHumanReadableSongName } from "#store/config-store";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,9 +12,6 @@ import {
 } from "@repo/ui/components/breadcrumb";
 import { Separator } from "@repo/ui/components/separator";
 import { SidebarTrigger } from "@repo/ui/components/sidebar";
-import { ThemeChanger } from "@repo/web/components/theme-changer/theme-changer";
-import { VisibilityToggle } from "@repo/web/components/visibility/visibility-toggle";
-import { useHumanReadableSongName } from "store/config-selectors.js";
 
 export const AppHeader = () => {
   const loadedSong = useHumanReadableSongName();
@@ -35,7 +34,6 @@ export const AppHeader = () => {
         </Breadcrumb>
 
         <ThemeChanger />
-        <VisibilityToggle />
       </div>
     </header>
   );

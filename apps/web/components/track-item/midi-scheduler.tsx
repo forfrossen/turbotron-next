@@ -1,4 +1,4 @@
-import { useIsPlaying, useMidiData } from "@repo/web/store/config-store";
+import { useIsPlaying, useMidiData } from "#store/config-store";
 import React from "react";
 import { interval, of, Subscription } from "rxjs";
 import { switchMap, takeWhile } from "rxjs/operators";

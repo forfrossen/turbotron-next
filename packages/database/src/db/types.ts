@@ -1,0 +1,22 @@
+import { midiDevices, midiGroups, midiMappingGroups, midiMappings, midiUserFavourites, navItems, navMain, projects, teams, users } from "#db/schema";
+
+export type UserSelect = typeof users.$inferSelect;
+export type UserInsert = typeof users.$inferInsert;
+export type TeamSelect = typeof teams.$inferSelect;
+export type TeamInsert = typeof teams.$inferInsert;
+export type NavMainSelect = typeof navMain.$inferSelect;
+export type NavMainInsert = typeof navMain.$inferInsert;
+export type NavItemsSelect = typeof navItems.$inferSelect;
+export type NavItemsInsert = typeof navItems.$inferInsert;
+export type ProjectSelect = typeof projects.$inferSelect;
+export type ProjectInsert = typeof projects.$inferInsert;
+export type MidiDeviceSelect = typeof midiDevices.$inferSelect;
+export type MidiDeviceInsert = typeof midiDevices.$inferInsert;
+export type MidiMappingSelect = typeof midiMappings.$inferSelect;
+export type MidiMappingInsert = typeof midiMappings.$inferInsert;
+export type MidiGroupSelect = typeof midiGroups.$inferSelect;
+export type MidiGroupInsert = typeof midiGroups.$inferInsert;
+export type MidiMappingGroupSelect = typeof midiMappingGroups.$inferSelect;
+export type MidiMappingGroupInsert = typeof midiMappingGroups.$inferInsert;
+export type MidiUserFavouritesSelect = typeof midiUserFavourites.$inferSelect;
+export type MidiUserFavouritesInsert = typeof midiUserFavourites.$inferInsert;

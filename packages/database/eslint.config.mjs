@@ -1,7 +1,4 @@
-import { config } from "@repo/eslint-config/base";
+import config from "@repo/eslint-config/base";
+import { defineConfig } from "eslint/config";
 
-/** @type {import("eslint").Linter.Config} */
-const moduleConfig = {
-  ...config
-};
-export default moduleConfig;
+export default defineConfig([...config]);

@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger
 } from "@repo/ui/components/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@repo/ui/components/sidebar";
-import { RenderIcon } from "@repo/web/components/sidebar/get-icon-by-name";
+import { RenderIcon } from "#components/sidebar/get-icon-by-name";
 
 export type NavMenuTeams = {
   name: string;

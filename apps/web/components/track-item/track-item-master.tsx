@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent } from "@repo/ui/components/card";
 
-import { useTrackHeight } from "@repo/web/store/config-store";
+import { useTrackHeight } from "#store/config-store";
 import { useWavesurferWithRxJS } from "hooks/useWavesurferWithRxJS.js";
 
 type Props = {} & React.ComponentProps<typeof Card>;

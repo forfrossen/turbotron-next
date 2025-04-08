@@ -1,7 +1,7 @@
 "use client";
 import { Subscribe } from "@react-rxjs/core";
 import { Sidebar, SidebarContent, SidebarFooter } from "@repo/ui/components/sidebar";
-import { PluginItem } from "@repo/web/components/track-manager/plugin-item";
+import { PluginItem } from "#components/track-manager/plugin-item";
 
 type Props = {};
 

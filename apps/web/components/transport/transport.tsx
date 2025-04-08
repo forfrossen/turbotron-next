@@ -1,6 +1,6 @@
 "use client";
 import { Card } from "@repo/ui/components/card";
-import { useLoadedSong } from "@repo/web/store/config-store";
+import { useLoadedSong } from "#store/config-store";
 
 export const Transport = () => {
   const loadedSong = useLoadedSong();

@@ -1,5 +1,5 @@
 "use client";
-import { useMidiData } from "@repo/web/store/config-store";
+import { useMidiData } from "#store/config-store";
 import { addCcRegions } from "components/track-item/utils/create-regions.js";
 import { isNil } from "lodash";
 import React, { useEffect } from "react";
@@ -11,7 +11,6 @@ const MidiGrid: React.FC = () => {
   const trackIndex = 0; // Assuming you want to display the first track
   const track = midiData?.tracks[trackIndex];
   const controlChanges = track?.controlChanges;
-  const notes = track?.notes;
   const wavesurfer = useWavesurfer();
 
   useEffect(() => {

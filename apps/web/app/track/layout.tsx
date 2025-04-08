@@ -1,5 +1,5 @@
 import { SidebarInset } from "@repo/ui/components/sidebar";
-import { TrackManager } from "@repo/web/components/track-manager/track-manager";
+import { TrackManager } from "#components/track-manager/track-manager";
 
 export default function TrackLayout({
   children

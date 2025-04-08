@@ -1,11 +1,17 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+import { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   transpilePackages: ["@repo/ui", "jotai-devtools", "@repo/database"],
   serverExternalPackages: ["thread-stream", "pino", "pino-worker", "pino-file", "pino-pretty"],
+  allowedDevOrigins: ["localhost", "192.168.178.81", "*.euw.devtunnels.ms"],
   experimental: {
-    reactCompiler: true
+    reactCompiler: true,
+    serverActions: {
+      allowedOrigins: ["https://localhost:3000", "https://c9r889n2-3000.euw.devtunnels.ms"]
+    }
   },
-  output: "export",
+  // output: "export",
   images: {
     unoptimized: true
   },

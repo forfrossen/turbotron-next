@@ -4,7 +4,7 @@
     "module": "NodeNext",
     "baseUrl": ".",
     "paths": {
-      "@repo/web/*": ["./*.tsx"]
+      "#*": ["./*.ts", "./*.tsx"]
     },
     "plugins": [
       {

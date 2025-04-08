@@ -1,15 +1,15 @@
 //ts-ignore
 import * as GeistFont from "geist/font";
-// import { GeistSans } from "geist/font/sans";
+import { GeistSans } from "geist/font/sans";
 
+import { AppHeader } from "#components/header/app-header";
+import { Providers } from "#components/providers/providers";
+import { AppSidebarWithData } from "#components/sidebar/sidebar-data-provider";
 import { SidebarInset } from "@repo/ui/components/sidebar";
 import { cn } from "@repo/ui/lib/utils";
-import { AppHeader } from "@repo/web/components/header/app-header";
-import AtomHydratorData from "@repo/web/components/providers/atom-hydrator-data";
-import { Providers } from "@repo/web/components/providers/providers";
-import { AppSidebarWithData } from "@repo/web/components/sidebar/sidebar-data-provider";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { DataFetcher } from "#components/providers/data-fetcher";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -34,16 +34,16 @@ export default function RootLayout({
           GeistFont.GeistMono.className
         )}
       >
-        <Providers>
-          <Suspense fallback="Loading...">
-            <AtomHydratorData />
+        <Suspense fallback="Loading...">
+          <DataFetcher />
+          <Providers>
             <AppSidebarWithData />
             <SidebarInset>
               <AppHeader />
               {children}
             </SidebarInset>
-          </Suspense>
-        </Providers>
+          </Providers>
+        </Suspense>
       </body>
     </html>
   );

@@ -1,42 +1,20 @@
 "use server";
 import { NavMenuItem } from "#components/nav/nav-main";
-import { NavMenuProjects } from "#components/nav/nav-projects";
 import { NavMenuUser } from "#components/nav/nav-user";
-import AppSidebar from "#components/sidebar/app-sidebar";
-import { NavMenuTeams } from "#components/team-switcher";
+import DataProvider from "#components/providers/data-provider";
 import { db } from "@repo/database";
 import { navItems, navMain, projects, teams, users } from "@repo/database/schema";
-import { Sidebar } from "@repo/ui/components/sidebar";
 import { eq } from "drizzle-orm";
 
-export type SidebarData = {
-  user: NavMenuUser;
-  teams: NavMenuTeams;
-  navMain: NavMenuItem[];
-  projects: NavMenuProjects;
-  user: NavMenuUser;
-};
-
-export async function AppSidebarWithData({
-  props
-}: Readonly<{
-  props?: React.ComponentProps<typeof Sidebar>;
-}>) {
+export async function DataFetcher() {
   const allUsers = await db.select().from(users);
-  // .where(eq(users.id, users?.id ?? 0));
-
   const allTeams = await db.select().from(teams);
-  // .where(eq(teams.userId, users?.id ?? 0));
-
   const navSections = await db.select().from(navMain);
-
   const allProjects = await db.select().from(projects);
-  // .where(eq(projects.userId, users?.id ?? 0));
 
   const navMainWithItems = await Promise.all(
     navSections.map(async (section) => {
-      const items = await db.select().from(navItems);
-      // .where(eq(navItems.navMainId, section.id));
+      const items = await db.select().from(navItems).where(eq(navItems.navMainId, section.id));
 
       return {
         title: section.title,
@@ -61,12 +39,10 @@ export async function AppSidebarWithData({
     navMain: navMainWithItems,
     projects: allProjects.map((project) => ({
       name: project.name,
-      url: project.url,
-      icon: project.icon
+      logo: project.logo,
+      plan: project.plan
     }))
   };
 
-  console.log("AppSidebarWithData", result);
-
-  return <AppSidebar data={result} {...props} />;
+  return <DataProvider data={result} />;
 }

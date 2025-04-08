@@ -3,18 +3,22 @@ import eslintConfigPrettier from "eslint-config-prettier";
 import drizzlePlugin from "eslint-plugin-drizzle";
 import onlyWarn from "eslint-plugin-only-warn";
 import turboPlugin from "eslint-plugin-turbo";
+import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
+
 /**
  * A shared ESLint configuration for the repository.
  *
  * @type {import("eslint").Linter.Config}
  * */
-export const config = [
+export default defineConfig([
   js.configs.recommended,
   eslintConfigPrettier,
-  ...tseslint.configs.recommended,
+  tseslint.configs.recommended,
   {
+    files: ["**/*.js, **/*.ts"],
     plugins: {
+      js,
       turbo: turboPlugin,
       drizzle: drizzlePlugin
     },
@@ -32,4 +36,4 @@ export const config = [
   {
     ignores: ["dist/**"]
   }
-];
+]);
