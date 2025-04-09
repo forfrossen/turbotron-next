@@ -1,0 +1,45 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "format": {
+      "dependsOn": ["^format"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
+    "migrate": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env.default", "$TURBO_ROOT$/.env.local"],
+      "env": ["DATABASE_URL"],
+      "cache": false,
+      "outputs": []
+    },
+    "studio": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env.default", "$TURBO_ROOT$/.env.local"],
+      "env": ["DATABASE_URL"],
+      "cache": false,
+      "outputs": []
+    },
+    "generate": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env.default", "$TURBO_ROOT$/.env.local"],
+      "env": ["DATABASE_URL"],
+      "cache": false,
+      "outputs": []
+    },
+    "seed": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env.default", "$TURBO_ROOT$/.env.local"],
+      "env": ["DATABASE_URL"],
+      "cache": false,
+      "outputs": []
+    },
+    "push": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env.default", "$TURBO_ROOT$/.env.local"],
+      "passThroughEnv": ["DATABASE_URL", "*"],
+      "env": ["NODE_ENV", "DATABASE_URL", "*"],
+      "cache": false,
+      "outputs": []
+    }
+  }
+}

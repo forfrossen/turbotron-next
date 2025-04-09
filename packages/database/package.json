@@ -1,0 +1,42 @@
+{
+  "name": "@repo/database",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "seed": "pnpm tsx ./src/seed.ts",
+    "migrate": "pnpm drizzle-kit migrate --config=drizzle.config.ts ",
+    "studio": "pnpm drizzle-kit studio --config=drizzle.config.ts ",
+    "generate": "pnpm drizzle-kit generate --config=drizzle.config.ts ",
+    "push": "pnpm drizzle-kit push --config=drizzle.config.ts && pnpm run seed",
+    "format": "pnpm  prettier --write \"./src/**/*.ts\"",
+    "lint": "pnpm eslint --debug",
+    "check-types": "pnpm tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/db/schema.ts",
+    "./types": "./src/db/types.ts"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.15.2",
+    "@repo/ui": "workspace:*",
+    "add": "^2.0.6",
+    "dotenv": "latest",
+    "drizzle-orm": "latest",
+    "drizzle-zod": "^0.7.0",
+    "eslint-plugin-drizzle": "^0.2.3",
+    "kysely": "latest",
+    "libsql": "^0.5.4",
+    "pnpm": "^10.6.1"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "drizzle-kit": "latest",
+    "eslint": "latest",
+    "tsup": "latest",
+    "tsx": "latest",
+    "typescript": "latest"
+  }
+}

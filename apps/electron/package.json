@@ -1,0 +1,51 @@
+{
+  "name": "@repo/electron",
+  "version": "1.7.2",
+  "private": true,
+  "engines": {
+    "node": ">=v16.13",
+    "npm": ">=8.1"
+  },
+  "main": "layers/main/dist/index.cjs",
+  "scripts": {
+    "dev": "node scripts/watch.js",
+    "build": "npm run build:main && npm run build:preload",
+    "build:main": "cd ./layers/main && vite build",
+    "build:preload": "cd ./layers/preload && vite build",
+    "build:preload:types": "dts-cb -i \"layers/preload/tsconfig.json\" -o \"layers/preload/exposedInMainWorld.d.ts\"",
+    "compile": "cross-env MODE=production npm run build && electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
+    "watch": "node scripts/watch.js",
+    "lint": "eslint . --ext js,ts",
+    "lint:inspect": "npx @eslint/config-inspector@latest",
+    "typecheck:main": "tsc --noEmit -p layers/main/tsconfig.json",
+    "typecheck:preload": "tsc --noEmit -p layers/preload/tsconfig.json",
+    "typecheck": "npm run typecheck:main && npm run typecheck:preload"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+
+    "@repo/typescript-config": "workspace:*",
+    "@electron-toolkit/eslint-config": "^2.0.0",
+    "@electron-toolkit/eslint-config-ts": "^3.0.0",
+    "@electron-toolkit/tsconfig": "^1.0.1",
+    "@typescript-eslint/eslint-plugin": "*",
+    "@electron-toolkit/typed-ipc": "latest",
+    "cross-env": "*",
+    "dts-for-context-bridge": "0.7.1",
+    "electron": "35.1.2",
+    "electron-builder": "26.0.12",
+    "electron-devtools-installer": "4.0.0",
+    "eslint": "*",
+    "eslint-plugin-vue": "10.0.0",
+    "typescript": "*",
+    "vite": "6.2.4"
+  },
+  "dependencies": {
+    "electron-updater": "6.6.2",
+    "@electron-toolkit/preload": "^3.0.1",
+    "@electron-toolkit/utils": "^4.0.0",
+    "react": "*",
+    "react-dom": "*"
+  }
+}

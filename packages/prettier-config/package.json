@@ -1,0 +1,10 @@
+{
+  "name": "@repo/prettier-config",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "prettier": "*"
+  }
+}

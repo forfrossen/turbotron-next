@@ -1,0 +1,12 @@
+{
+  "name": "@repo/midi-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "@repo/database": "workspace:*",
+    "xstate": "latest",
+    "rxjs": "latest"
+  }
+}
