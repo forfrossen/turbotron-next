@@ -5,7 +5,7 @@ import { useWavesurfer } from "@wavesurfer/react";
 import { useEffect, useRef } from "react";
 import Minimap from "wavesurfer.js/dist/plugins/minimap";
 import RegionsPlugin from "wavesurfer.js/dist/plugins/regions";
-import TimelinePlugin from "wavesurfer.js/dist/plugins/timeline.esm";
+import TimelinePlugin from "wavesurfer.js/dist/plugins/timeline";
 import ZoomPlugin from "wavesurfer.js/dist/plugins/zoom";
 
 export const useWavesurferWithRxJS = () => {

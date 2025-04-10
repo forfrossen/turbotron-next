@@ -4,14 +4,15 @@ import { ChevronsUpDown, Plus } from "lucide-react";
 import * as React from "react";
 
 import { RenderIcon } from "@/components/sidebar/get-icon-by-name";
+import { useTeams } from "@/store/useAuthStore";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuTrigger
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger
 } from "@repo/ui/components/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@repo/ui/components/sidebar";
 
@@ -20,6 +21,11 @@ export type NavMenuTeams = {
   logo: string;
   plan: string;
 }[];
+
+export const TeamSwitcherWithData = () => {
+  const teams = useTeams();
+  return <TeamSwitcher teams={teams} />;
+};
 
 export function TeamSwitcher({ teams }: { teams: NavMenuTeams }) {
   const { isMobile } = useSidebar();

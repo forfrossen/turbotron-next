@@ -1,13 +1,13 @@
 //ts-ignore
 import { AppHeader } from "@/components/header/app-header";
 import { Providers } from "@/components/providers/providers";
-import { AppSidebar2 } from "@/components/sidebar/app-sidebar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
 // import { AppSidebarWithData } from "@/components/sidebar/sidebar-data-provider";
 import { DataFetcher } from "@/components/providers/data-fetcher";
 import { SidebarInset } from "@repo/ui/components/sidebar";
 import { cn } from "@repo/ui/lib/utils";
-import { GeistMono } from 'geist/font/mono';
-import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -37,7 +37,7 @@ export default function RootLayout({
         <Suspense fallback="Loading...">
           <DataFetcher />
           <Providers>
-            <AppSidebar2 />
+            <AppSidebar />
             <SidebarInset>
               <AppHeader />
               {children}

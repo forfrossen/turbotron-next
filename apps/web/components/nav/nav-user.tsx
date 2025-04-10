@@ -2,6 +2,7 @@
 
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from "lucide-react";
 
+import { useUser } from "@/store/useAuthStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
 import {
   DropdownMenu,
@@ -18,6 +19,12 @@ export type NavMenuUser = {
   name: string;
   email: string;
   avatar: string;
+};
+
+export const NavUserWithData = () => {
+  const user = useUser();
+
+  return <NavUser user={user as NavMenuUser} />;
 };
 
 export function NavUser({ user }: { user: NavMenuUser }) {

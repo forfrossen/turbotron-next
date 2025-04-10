@@ -4,25 +4,24 @@ import { NavMenuProjects } from "@/components/nav/nav-projects";
 import { NavMenuUser } from "@/components/nav/nav-user";
 import AppSidebar from "@/components/sidebar/app-sidebar";
 import {
-    getNavSections,
-    getProjectsOfUser,
-    getTeamsOfUser,
-    getUserById
+  getNavSections,
+  getProjectsOfUser,
+  getTeamsOfUser,
+  getUserById
 } from "@/components/sidebar/data/get-sidebar-data";
 import { NavMenuTeams } from "@/components/team-switcher";
 import { db } from "@repo/database";
 import { navItems } from "@repo/database/schema";
 import { Sidebar } from "@repo/ui/components/sidebar";
 
-export type SidebarData = {
+type SidebarData = {
   user: NavMenuUser;
   teams: NavMenuTeams;
   navMain: NavMenuItem[];
   projects: NavMenuProjects;
-  user: NavMenuUser;
 };
 
-export async function AppSidebarWithData({
+async function AppSidebarWithData({
   props
 }: Readonly<{
   props?: React.ComponentProps<typeof Sidebar>;
@@ -52,7 +51,7 @@ export async function AppSidebarWithData({
   );
 
   const result: SidebarData = {
-    user: allUsers[0] as NavMenuUser,
+    user: allUsers as NavMenuUser,
     teams: allTeams.map((team) => ({
       name: team.name,
       logo: team.logo,
