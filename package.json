@@ -39,8 +39,14 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "electron",
+      "electron-winstaller",
       "esbuild",
-      "msw"
+      "msw",
+      "prettier",
+      "turbo",
+      "turbo-linux-64",
+      "typescript"
     ]
   }
 }
