@@ -1,5 +1,5 @@
-import { navItems, navMain, projects, teams, users } from "@/db/schema";
-import { db } from "@/index";
+import { navItems, navMain, projects, teams, users } from "#db/schema";
+import { db } from "#index";
 
 export async function seedNavMenu() {
   // Seed user

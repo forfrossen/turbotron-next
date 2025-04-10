@@ -1,5 +1,5 @@
-import { midiGroups } from "@/db/schema";
-import { db } from "@/index";
+import { midiGroups } from "#db/schema";
+import { db } from "#index";
 
 export async function seedMidiGroups() {
   console.log("Seeding MidiGroups...");

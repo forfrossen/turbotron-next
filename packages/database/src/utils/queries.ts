@@ -1,6 +1,7 @@
-import { midiDevices } from "@/db/schema";
-import { db } from "@/index";
+import { midiDevices } from "#db/schema";
+import { db } from "#index";
 import { eq } from "drizzle-orm";
+
 
 export const getKemperDeviceId = async () => {
   console.log("Fetching Device ID for Kemper...");

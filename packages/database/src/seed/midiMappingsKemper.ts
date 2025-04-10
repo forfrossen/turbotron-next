@@ -1,6 +1,6 @@
-import { midiMappings } from "@/db/schema";
-import { db } from "@/index";
-import { getKemperDeviceId } from "@/utils/queries";
+import { midiMappings } from "#db/schema";
+import { db } from "#index";
+import { getKemperDeviceId } from "#utils/queries";
 
 export async function seedMidiMappingsForKemper() {
   const deviceId = await getKemperDeviceId();

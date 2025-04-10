@@ -2,6 +2,10 @@
   "name": "@repo/database",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
+  "imports": {
+    "#*": "./src/*.ts"
+  },
   "scripts": {
     "seed": "pnpm tsx ./src/seed.ts",
     "migrate": "pnpm drizzle-kit migrate --config=drizzle.config.ts ",

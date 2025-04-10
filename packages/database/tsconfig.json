@@ -5,8 +5,5 @@
   "compilerOptions": {
     "baseUrl": ".",
     "module": "Preserve",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
   }
 }
