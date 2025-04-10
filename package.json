@@ -8,7 +8,7 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint:inspect": "npx @eslint/config-inspector@latest",
-    "web:dev": "turbo @repo/web#dev",
+    "web:dev": "turbo @repo/web#dev --env-mode=loose",
     "web:lint": "turbo @repo/web#lint --env-mode=loose",
     "db:push": "turbo run @repo/database#push --env-mode=loose",
     "db:migrate": "turbo run @repo/database#migrate --env-mode=loose",
@@ -19,31 +19,34 @@
     "db:lint": "turbo run @repo/database#lint",
     "db:format": "turbo run @repo/database#format",
     "compile": "pnpm turbo compile",
-    "list-dep-mismatches": "pnpm syncpack list-mismatches",
-    "fix-dep-mismatches": "pnpm syncpack fix-mismatches",
-    "format-package.json": "pnpm syncpack format",
-    "update-deps": "pnpm syncpack update",
+    "syncpack:list": "pnpm syncpack list-mismatches",
+    "syncpack:fix": "pnpm syncpack fix-mismatches",
+    "syncpack:format": "pnpm syncpack format",
+    "syncpack:update": "pnpm syncpack update",
     "update-corepack": "npm install -g corepack@latest",
     "update-pnpm": "corepack use pnpm@latest"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "prettier": "^3.5.1",
+    "prettier": "*",
+    "syncpack": "latest",
     "turbo": "^2.4.2",
-    "typescript": "5.7.3"
+    "typescript": "*"
   },
   "packageManager": "pnpm@10.4.1",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "core-js-pure",
       "electron",
       "electron-winstaller",
       "esbuild",
       "msw",
       "prettier",
+      "sharp",
       "turbo",
       "turbo-linux-64",
       "typescript"
