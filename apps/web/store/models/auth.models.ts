@@ -1,11 +1,4 @@
-import { TeamsSelect, UserSelect } from "@repo/database/types";
-
-export const emptyUser: UserSelect = {
-  id: 0,
-  name: "",
-  email: "",
-  avatar: ""
-};
+import { TeamsSelect } from "@repo/database/types";
 
 export const emptyTeam: TeamsSelect = {
   id: 0,
