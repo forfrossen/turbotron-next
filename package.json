@@ -1,5 +1,5 @@
 {
-  "name": "shadcn-ui-monorepo",
+  "name": "turbotron-next",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -29,13 +29,13 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@turbo/gen": "^2.4.2",
+    "@turbo/gen": "^2.5.0",
     "prettier": "*",
     "syncpack": "latest",
-    "turbo": "^2.4.2",
+    "turbo": "^2.5.0",
     "typescript": "*"
   },
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "pnpm@10.8.0+sha512.0e82714d1b5b43c74610193cb20734897c1d00de89d0e18420aebc5977fa13d780a9cb05734624e81ebd81cc876cd464794850641c48b9544326b5622ca29971",
   "engines": {
     "node": ">=22"
   },
@@ -52,5 +52,8 @@
       "turbo-linux-64",
       "typescript"
     ]
+  },
+  "dependencies": {
+    "case": "^1.6.3"
   }
 }

@@ -1,4 +1,4 @@
-import { midiDevices, midiGroups, midiMappingGroups, midiMappings, midiUserFavourites, navItems, navMain, projects, teams, users } from "./schema.ts";
+import { midiDevices, midiGroups, midiMappingGroups, midiMappings, midiUserFavourites, navItems, navMain, projects, teams, users } from "#db/schema";
 
 export type UserSelect = typeof users.$inferSelect;
 export type UserInsert = typeof users.$inferInsert;

@@ -17,6 +17,7 @@
   "dependencies": {
     "@libsql/client": "^0.15.2",
     "@next/env": "^15.2.1",
+    "@preact/signals-react": "^3.0.1",
     "@react-rxjs/core": "latest",
     "@react-rxjs/utils": "latest",
     "@repo/database": "workspace:*",

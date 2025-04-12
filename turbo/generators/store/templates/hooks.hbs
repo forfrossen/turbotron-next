@@ -1,0 +1,6 @@
+import { bind } from '@react-rxjs/core'; 
+import { {{camelCase name}}Core$ } from './{{kebabCase name}}.state';
+
+const [use{{pascalCase name}}, {{camelCase name}}$] = bind({{camelCase name}}Core$);
+
+export { use{{pascalCase name}}, {{camelCase name}}$ };

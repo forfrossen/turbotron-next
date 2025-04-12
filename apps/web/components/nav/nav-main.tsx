@@ -2,10 +2,9 @@
 
 import { ChevronRight } from "lucide-react";
 
-import { getNavSectionsWithItems } from "@/components/sidebar/data/get-sidebar-data";
-import { RenderIcon } from "@/components/sidebar/get-icon-by-name";
-import { useAsyncActionToObservable } from "@/hooks/useAsyncActionToObservable";
-import { navItems$, useNavItems } from "@/store/nav-store";
+import { navSectionsWithItems } from "@/store";
+import { RenderIcon } from "@/utils/get-icon-by-name";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@repo/ui/components/collapsible";
 import {
   SidebarGroup,
@@ -51,9 +50,12 @@ export interface NavMenuItem {
   }[];
 }
 
-export const NavMainWithData = () => {
-  useAsyncActionToObservable(getNavSectionsWithItems, navItems$);
-  const menuItems = useNavItems();
+const NavMainWithData = () => {
+  // useAsyncActionToObservable(getNavSectionsWithItems, navItems$);
+  // const menuItems = useNavItems();
+  useSignals();
+
+  const menuItems = navSectionsWithItems.value;
 
   return (
     <ErrorBoundary fallback={<div>Error loading menu</div>}>
@@ -65,7 +67,7 @@ export const NavMainWithData = () => {
   );
 };
 
-export function NavMain({ items }: { items: NavMenuItem[] }) {
+function NavMain({ items }: { items: NavMenuItem[] }) {
   if (!items?.length) return null;
 
   return (
@@ -102,3 +104,5 @@ export function NavMain({ items }: { items: NavMenuItem[] }) {
     </SidebarGroup>
   );
 }
+
+export default NavMainWithData;

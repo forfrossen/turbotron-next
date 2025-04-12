@@ -2,7 +2,8 @@
 
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from "lucide-react";
 
-import { useUser } from "@/store/useAuthStore";
+import { userSignal } from "@/store";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
 import {
   DropdownMenu,
@@ -21,13 +22,15 @@ export type NavMenuUser = {
   avatar: string;
 };
 
-export const NavUserWithData = () => {
-  const user = useUser();
+const NavUserWithData = () => {
+  // const user = useUser();
+  const user = userSignal.value;
+  useSignals();
 
   return <NavUser user={user as NavMenuUser} />;
 };
 
-export function NavUser({ user }: { user: NavMenuUser }) {
+function NavUser({ user }: { user: NavMenuUser }) {
   const { isMobile } = useSidebar();
 
   return (
@@ -101,3 +104,5 @@ export function NavUser({ user }: { user: NavMenuUser }) {
     </SidebarMenu>
   );
 }
+
+export default NavUserWithData;

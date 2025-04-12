@@ -3,8 +3,10 @@
 import { ChevronsUpDown, Plus } from "lucide-react";
 import * as React from "react";
 
-import { RenderIcon } from "@/components/sidebar/get-icon-by-name";
-import { useTeams } from "@/store/useAuthStore";
+import { RenderIcon } from "@/utils/get-icon-by-name";
+
+import { teamsSignal } from "@/store";
+import { useSignals } from "@preact/signals-react/runtime";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +25,13 @@ export type NavMenuTeams = {
 }[];
 
 export const TeamSwitcherWithData = () => {
-  const teams = useTeams();
+  useSignals();
+  const teamsData = teamsSignal.value;
+  const teams = teamsData.map((team) => ({
+    name: team.name,
+    logo: team.logo,
+    plan: team.plan
+  }));
   return <TeamSwitcher teams={teams} />;
 };
 

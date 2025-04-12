@@ -2,11 +2,9 @@
 
 import { Folder, Forward, MoreHorizontal, Trash2 } from "lucide-react";
 
-import { getProjectsOfUser } from "@/components/sidebar/data/get-sidebar-data";
-import { RenderIcon } from "@/components/sidebar/get-icon-by-name";
-import { useAsyncActionToObservable } from "@/hooks/useAsyncActionToObservable";
-import { projects$, useProjects } from "@/store/nav-store";
-import { useUser } from "@/store/useAuthStore";
+import { projectsSignal } from "@/store";
+import { RenderIcon } from "@/utils/get-icon-by-name";
+import { useSignals } from "@preact/signals-react/runtime";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,15 +29,12 @@ export type NavMenuProjects = {
   icon: string;
 }[];
 
-export const NavProjectsWithData = () => {
-  const userId = useUser().id;
-  useAsyncActionToObservable(async () => await getProjectsOfUser(userId), projects$);
-  const projects = useProjects();
-
-  return <NavProjects projects={projects} />;
+const NavProjectsWithData = () => {
+  useSignals();
+  return <NavProjects projects={projectsSignal.value} />;
 };
 
-export function NavProjects({ projects }: { projects: NavMenuProjects }) {
+function NavProjects({ projects }: { projects: NavMenuProjects }) {
   const { isMobile } = useSidebar();
 
   return (
@@ -93,3 +88,5 @@ export function NavProjects({ projects }: { projects: NavMenuProjects }) {
     </SidebarGroup>
   );
 }
+
+export default NavProjectsWithData;

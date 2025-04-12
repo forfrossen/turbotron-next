@@ -1,6 +1,6 @@
 import { UserSelect } from "@repo/database/types";
 
-export const emptyUser: UserSelect = {
+export const defaultUser: UserSelect = {
   id: 0,
   name: "",
   email: "",
