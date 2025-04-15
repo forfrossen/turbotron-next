@@ -1,9 +1,9 @@
 "use client";
 
-import { getUserById } from "@/components/providers/user/get-user-by-id";
-import { defaultUser, userIdSignal, userSignal } from "@/store";
-import { useSignals } from "@preact/signals-react/runtime";
-import { useEffect } from "react";
+import {getUserById} from "@/data/user/get-user-by-id";
+import {defaultUser, userIdSignal, userSignal} from "@/store";
+import {useSignals} from "@preact/signals-react/runtime";
+import {useEffect} from "react";
 
 export function UserProvider() {
   useSignals();

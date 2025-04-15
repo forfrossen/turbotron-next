@@ -1,8 +1,8 @@
-import { getProjectsByUserAndTeams } from "@/components/providers/projects/get-projects-by-user-id";
-import { projectsSignal, resetProjects, teamIdsSignal, userIdSignal } from "@/store";
-import { useSignals } from "@preact/signals-react/runtime";
-import { isEqual, isNil } from "lodash";
-import { useEffect } from "react";
+import {getProjectsByUserAndTeams} from "@/data/projects/get-projects-by-user-id";
+import {projectsSignal, resetProjects, teamIdsSignal, userIdSignal} from "@/store";
+import {useSignals} from "@preact/signals-react/runtime";
+import {isEqual, isNil} from "lodash";
+import {useEffect} from "react";
 
 export const ProjectsProvider = () => {
   useSignals();

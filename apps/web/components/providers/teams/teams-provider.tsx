@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import {useEffect} from "react";
 
-import { getTeamsByUserId } from "@/components/providers/teams/get-teams-by-user-id";
-import { resetTeams, teamsSignal, userIdSignal } from "@/store";
-import { useSignals } from "@preact/signals-react/runtime";
-import { isEqual, isNil } from "lodash";
+import {getTeamsByUserId} from "@/data/teams/get-teams-by-user-id";
+import {resetTeams, teamsSignal, userIdSignal} from "@/store";
+import {useSignals} from "@preact/signals-react/runtime";
+import {isEqual, isNil} from "lodash";
 
 export const TeamsProvider = () => {
   useSignals();

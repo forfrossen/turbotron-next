@@ -1,10 +1,9 @@
 "use client";
 
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from "lucide-react";
+import {BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles} from "lucide-react";
 
-import { userSignal } from "@/store";
-import { useSignals } from "@preact/signals-react/runtime";
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/avatar";
+import {userAtom} from "@/store/user/user.atoms";
+import {Avatar, AvatarFallback, AvatarImage} from "@repo/ui/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@repo/ui/components/dropdown-menu";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@repo/ui/components/sidebar";
+import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar} from "@repo/ui/components/sidebar";
+import {useAtomValue} from "jotai";
+import {withErrorBoundaryAndSuspense} from "../ErrorBoundary";
 
 export type NavMenuUser = {
   name: string;
@@ -22,16 +23,14 @@ export type NavMenuUser = {
   avatar: string;
 };
 
-const NavUserWithData = () => {
-  // const user = useUser();
-  const user = userSignal.value;
-  useSignals();
-
-  return <NavUser user={user as NavMenuUser} />;
-};
-
-function NavUser({ user }: { user: NavMenuUser }) {
-  const { isMobile } = useSidebar();
+function NavUser() {
+  const {isMobile} = useSidebar();
+  const userQuery = useAtomValue(userAtom);
+  if (userQuery.isLoading) return null;
+  if (userQuery.isError) return null;
+  if (userQuery.isSuccess && !userQuery.data) return null;
+  if (!userQuery.data) return null;
+  const user = userQuery.data as NavMenuUser;
 
   return (
     <SidebarMenu>
@@ -105,4 +104,4 @@ function NavUser({ user }: { user: NavMenuUser }) {
   );
 }
 
-export default NavUserWithData;
+export default withErrorBoundaryAndSuspense(NavUser);

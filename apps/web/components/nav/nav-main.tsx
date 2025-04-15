@@ -1,14 +1,11 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
+import {ChevronRight} from "lucide-react";
 
-import { navSectionsWithItems } from "@/store";
-import { RenderIcon } from "@/utils/get-icon-by-name";
-import { useSignals } from "@preact/signals-react/runtime";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@repo/ui/components/collapsible";
+import {navSectionsWithItemsAtom} from "@/store/nav/nav.atoms";
+import {RenderIcon} from "@/utils/get-icon-by-name";
+import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@repo/ui/components/collapsible";
 import {
-  SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -16,28 +13,9 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem
 } from "@repo/ui/components/sidebar";
+import {useAtomValue} from "jotai";
 import Link from "next/link";
-import { Component, ErrorInfo, ReactNode, Suspense } from "react";
-
-class ErrorBoundary extends Component<{ children: ReactNode; fallback: ReactNode }> {
-  state = { hasError: false };
-
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Error:", error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return this.props.fallback;
-    }
-
-    return this.props.children;
-  }
-}
+import {withErrorBoundaryAndSuspense} from "../ErrorBoundary";
 
 export interface NavMenuItem {
   title: string;
@@ -50,29 +28,15 @@ export interface NavMenuItem {
   }[];
 }
 
-const NavMainWithData = () => {
-  // useAsyncActionToObservable(getNavSectionsWithItems, navItems$);
-  // const menuItems = useNavItems();
-  useSignals();
-
-  const menuItems = navSectionsWithItems.value;
-
+function NavMain() {
+  const menuItemsQuery = useAtomValue(navSectionsWithItemsAtom);
+  const items = menuItemsQuery.data;
+  if (menuItemsQuery.isLoading) return null;
+  if (menuItemsQuery.isError) return null;
+  if (menuItemsQuery.isSuccess && !items) return null;
+  if (!items) return null;
   return (
-    <ErrorBoundary fallback={<div>Error loading menu</div>}>
-      <NavMain items={menuItems} />
-      <Suspense fallback={<div>Loading...</div>}>
-        <NavMain items={menuItems} />;
-      </Suspense>
-    </ErrorBoundary>
-  );
-};
-
-function NavMain({ items }: { items: NavMenuItem[] }) {
-  if (!items?.length) return null;
-
-  return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+    <>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
@@ -101,8 +65,8 @@ function NavMain({ items }: { items: NavMenuItem[] }) {
           </Collapsible>
         ))}
       </SidebarMenu>
-    </SidebarGroup>
+    </>
   );
 }
 
-export default NavMainWithData;
+export default withErrorBoundaryAndSuspense(NavMain);

@@ -1,10 +1,9 @@
 "use client";
 
-import { Folder, Forward, MoreHorizontal, Trash2 } from "lucide-react";
+import {Folder, Forward, MoreHorizontal, Trash2} from "lucide-react";
 
-import { projectsSignal } from "@/store";
-import { RenderIcon } from "@/utils/get-icon-by-name";
-import { useSignals } from "@preact/signals-react/runtime";
+import {projectsByUserAndTeamsAtom} from "@/store/projects/projects.atoms";
+import {RenderIcon} from "@/utils/get-icon-by-name";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +20,10 @@ import {
   SidebarMenuItem,
   useSidebar
 } from "@repo/ui/components/sidebar";
+import {useAtomValue} from "jotai";
 import Link from "next/link";
+import {Suspense} from "react";
+import {ErrorBoundary, withErrorBoundaryAndSuspense} from "../ErrorBoundary";
 
 export type NavMenuProjects = {
   name: string;
@@ -30,12 +32,20 @@ export type NavMenuProjects = {
 }[];
 
 const NavProjectsWithData = () => {
-  useSignals();
-  return <NavProjects projects={projectsSignal.value} />;
+  return (
+    <ErrorBoundary fallback={<div>Error loading menu</div>}>
+      <Suspense fallback={<div>Loading...</div>}>
+        <NavProjects />
+      </Suspense>
+    </ErrorBoundary>
+  );
 };
 
-function NavProjects({ projects }: { projects: NavMenuProjects }) {
-  const { isMobile } = useSidebar();
+function NavProjects() {
+  const {isMobile} = useSidebar();
+  const projectsQuery = useAtomValue(projectsByUserAndTeamsAtom);
+  const projects = projectsQuery.data as NavMenuProjects;
+  if (!projects) return null;
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -89,4 +99,4 @@ function NavProjects({ projects }: { projects: NavMenuProjects }) {
   );
 }
 
-export default NavProjectsWithData;
+export default withErrorBoundaryAndSuspense(NavProjects);

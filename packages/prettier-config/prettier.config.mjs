@@ -4,11 +4,12 @@
  */
 
 const config = {
+  experimentalTernaries: true,
   trailingComma: "none",
   "arrow-body-style": ["error", "as-needed"],
   arrowParens: "always",
   bracketSameLine: false,
-  bracketSpacing: true,
+  bracketSpacing: false,
   endOfLine: "lf",
   experimentalTernaries: true,
   extends: ["prettier", "plugin:prettier/recommended"],

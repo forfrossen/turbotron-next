@@ -1,9 +1,9 @@
-import { getNavItemsBySection } from "@/components/providers/nav/get-nav-items-by-section";
-import { getNavSections } from "@/components/providers/nav/get-nav-sections";
-import { navItemsSignal, navSectionsSignal } from "@/store";
-import { useSignals } from "@preact/signals-react/runtime";
-import { isEqual, isNil } from "lodash";
-import { useEffect } from "react";
+import {getNavItemsBySection} from "@/data/nav/get-nav-items-by-section";
+import {getNavSections} from "@/data/nav/get-nav-sections";
+import {navItemsSignal, navSectionsSignal} from "@/store";
+import {useSignals} from "@preact/signals-react/runtime";
+import {isEqual, isNil} from "lodash";
+import {useEffect} from "react";
 
 export const NavProvider = () => {
   useSignals();
@@ -29,8 +29,19 @@ export const NavProvider = () => {
       return;
     }
 
-    console.log(`Nav sections data is different, updating the signal value.`);
-    navSectionsSignal.value = sections;
+    const existingSectionTitles = navSectionsSignal.value.map((section) => section.title.toLocaleLowerCase());
+    const missingSections = sections.filter(
+      (fetchedSection) => !existingSectionTitles.includes(fetchedSection.title.toLocaleLowerCase())
+    );
+
+    if (!missingSections || !missingSections.length || isNil(missingSections)) {
+      console.log(`No missing sections. Nothing to do`);
+      return;
+    }
+    missingSections.forEach((missingSection) => {
+      console.log(`adding section ${missingSection.title} to navigation`);
+      navSectionsSignal.value.push(missingSection);
+    });
   }
 
   async function getNavItems() {
