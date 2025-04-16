@@ -1,13 +1,9 @@
 "use client";
-import { useLoadedSong } from "@/store/config-store";
-import { Card } from "@repo/ui/components/card";
+import {Card} from "@repo/ui/components/card";
 
 export const Transport = () => {
-  const loadedSong = useLoadedSong();
-  const isLoadedSong = loadedSong !== null && loadedSong !== undefined;
-
   return (
-    <Card className="align-end z-10 self-end w-full">
+    <Card className="align-end z-200 self-end w-full fixed bottom-0 mt-2 rounded-none">
       <div className="text-center">Please select a song</div>
     </Card>
   );

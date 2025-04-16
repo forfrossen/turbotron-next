@@ -2,8 +2,8 @@
 import { useLoadedSongUrl, useTrackHeight } from "@/store/config-store";
 import { wavesurferAtom } from "@/store/wavesurfer/wavesurfer.state";
 import { useAtom } from "jotai";
-import { useEffect, useRef } from "react";
-import WaveSurfer from "wavesurfer.js";
+import { useEffect, useMemo, useRef } from "react";
+import WaveSurfer, { WaveSurferOptions } from "wavesurfer.js";
 import Minimap from "wavesurfer.js/dist/plugins/minimap";
 import RegionsPlugin from "wavesurfer.js/dist/plugins/regions";
 import TimelinePlugin from "wavesurfer.js/dist/plugins/timeline";
@@ -16,14 +16,13 @@ export const useWavesurferWithRxJS = () => {
   const url = useLoadedSongUrl();
   const trackHeight = useTrackHeight();
   const waveColor = "purple";
-  const height = parseInt( trackHeight.replace( /rem/g, "" ) ) * 12;
+  const height = parseInt( trackHeight.replace( /rem/g, "" ) ) * 10;
   const containerRef = useRef<HTMLDivElement | null>( null );
 
   const minimap = Minimap.create( {
     height: 20,
     waveColor: "#ddd",
     progressColor: "#999"
-    // the Minimap takes all the same options as the WaveSurfer itself
   } );
 
   const topTimeline = TimelinePlugin.create( {
@@ -38,7 +37,6 @@ export const useWavesurferWithRxJS = () => {
     }
   } );
 
-  // Create a second timeline
   const bottomTimeline = TimelinePlugin.create( {
     height: 10,
     timeInterval: 5,
@@ -50,13 +48,30 @@ export const useWavesurferWithRxJS = () => {
   } );
 
   const zoomPlugin = ZoomPlugin.create( {
-    // the amount of zoom per wheel step, e.g. 0.5 means a 50% magnification per scroll
     scale: 0.5,
-    // Optionally, specify the maximum pixels-per-second factor while zooming
     maxZoom: 100
   } );
 
   const regions = RegionsPlugin.create();
+
+  const waveSurferOptions: Partial<WaveSurferOptions> = useMemo( () => ( {
+    url,
+    waveColor,
+    height,
+    autoCenter: true,
+    barGap: 2,
+    interact: true,
+    dragToSeek: true,
+    plugins: [
+      minimap,
+      topTimeline,
+      bottomTimeline,
+      // zoomPlugin,
+      regions
+    ]
+  } ), [ url, waveColor, height ] );
+
+
   useEffect( () => {
     if ( !isMounted ) {
       console.debug( "[ERROR] Component is not mounted" );
@@ -68,62 +83,9 @@ export const useWavesurferWithRxJS = () => {
     }
 
     if ( !wavesurfer ) {
-      setWavesurfer( WaveSurfer.create( {
-        container: containerRef.current,
-        url,
-        waveColor,
-        height,
-        autoCenter: true,
-        barGap: 2,
-        interact: true,
-        dragToSeek: true,
-        plugins: [
-          // Register the plugin
-          minimap,
-          topTimeline,
-          bottomTimeline,
-          // zoomPlugin,
-          regions
-        ]
-      } ) );
+      setWavesurfer( WaveSurfer.create( { ...waveSurferOptions, container: containerRef.current! } ) );
     }
   }, [ wavesurfer, containerRef, isMounted ] );
-
-  // const { wavesurfer, isReady, currentTime, isPlaying } = useWavesurfer({
-  //   container: containerRef,
-  //   url,
-  //   waveColor,
-  //   height,
-  //   autoCenter: true,
-  //   barGap: 2,
-  //   interact: true,
-  //   dragToSeek: true,
-  //   plugins: [
-  //     // Register the plugin
-  //     minimap,
-  //     topTimeline,
-  //     bottomTimeline,
-  //     // zoomPlugin,
-  //     regions
-  //   ]
-  // });
-
-  // useEffect( () => {
-  //   console.log( "Wavesurfer instance created", wavesurfer );
-  //   wavesurfer$.next( wavesurfer );
-  // }, [ wavesurfer ] );
-
-  // useEffect(() => {
-  //   isReady$.next(isReady);
-  // }, [isReady]);
-
-  // useEffect(() => {
-  //   currentTime$.next(currentTime);
-  // }, [currentTime]);
-
-  // useEffect(() => {
-  //   isPlaying$.next(isPlaying);
-  // }, [isPlaying]);
 
   return {
     containerRef,

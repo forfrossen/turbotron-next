@@ -36,10 +36,6 @@ export const Providers = ({
       <Provider store={myStore}>
         <AtomsHydrator atomValues={[[queryClientAtom, queryClient]]}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            {/* <UserProvider />
-            <TeamsProvider />
-            <ProjectsProvider />
-            <NavProvider /> */}
             <SidebarProvider>{children}</SidebarProvider>
           </ThemeProvider>
         </AtomsHydrator>

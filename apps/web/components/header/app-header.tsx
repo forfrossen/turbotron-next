@@ -1,23 +1,24 @@
 "use client";
 
-import { ThemeChanger } from "@/components/theme-changer/theme-changer";
-import { useHumanReadableSongName } from "@/store/config-store";
+import {ThemeChanger} from "@/components/theme-changer/theme-changer";
+import {useHumanReadableSongName} from "@/store/config-store";
 import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
 } from "@repo/ui/components/breadcrumb";
-import { Separator } from "@repo/ui/components/separator";
-import { SidebarTrigger } from "@repo/ui/components/sidebar";
+import {Card} from "@repo/ui/components/card";
+import {Separator} from "@repo/ui/components/separator";
+import {SidebarTrigger} from "@repo/ui/components/sidebar";
 
 export const AppHeader = () => {
   const loadedSong = useHumanReadableSongName();
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-      <div className="flex flex-row items-center gap-2 px-4 w-full">
+    <header className="fixed z-40 top-0 flex h-16 shrink-0 w-full items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 height-[var(--header-height)]">
+      <Card className="flex flex-row items-center gap-2 px-4 w-full rounded-none">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
 
@@ -34,7 +35,7 @@ export const AppHeader = () => {
         </Breadcrumb>
 
         <ThemeChanger />
-      </div>
+      </Card>
     </header>
   );
 };

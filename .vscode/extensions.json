@@ -6,5 +6,6 @@
     "github.copilot",
     "mikestead.dotenv",
     "streetsidesoftware.code-spell-checker",
+    "bradlc.vscode-tailwindcss"
   ]
 }

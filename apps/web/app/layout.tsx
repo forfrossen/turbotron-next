@@ -1,13 +1,13 @@
-import { AppHeader } from "@/components/header/app-header";
-import { Providers } from "@/components/providers/providers";
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import {AppHeader} from "@/components/header/app-header";
+import {Providers} from "@/components/providers/providers";
+import {AppSidebar} from "@/components/sidebar/app-sidebar";
 // import { AppSidebarWithData } from "@/components/sidebar/sidebar-data-provider";
-import { SidebarInset } from "@repo/ui/components/sidebar";
-import { cn } from "@repo/ui/lib/utils";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
-import type { Metadata } from "next";
-import { Suspense } from "react";
+import {SidebarInset} from "@repo/ui/components/sidebar";
+import {cn} from "@repo/ui/lib/utils";
+import {GeistMono} from "geist/font/mono";
+import {GeistSans} from "geist/font/sans";
+import type {Metadata} from "next";
+import {Suspense} from "react";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -37,6 +37,7 @@ export default function RootLayout({
             <AppSidebar />
             <SidebarInset>
               <AppHeader />
+              <div className="flex h-16 shrink-0 w-100 my-1.5 height-[var(--header-height)]" />
               {children}
             </SidebarInset>
           </Providers>

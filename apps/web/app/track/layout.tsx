@@ -1,5 +1,6 @@
-import { TrackManager } from "@/components/track-manager/track-manager";
-import { SidebarInset } from "@repo/ui/components/sidebar";
+import {TrackManager} from "@/components/track-manager/track-manager";
+import {Transport} from "@/components/transport/transport";
+import {SidebarInset} from "@repo/ui/components/sidebar";
 
 export default function TrackLayout({
   children
@@ -8,6 +9,7 @@ export default function TrackLayout({
 }>) {
   return (
     <div className="sticky flex flex-1 flex-row gap-4">
+      <Transport />
       <TrackManager side="left" />
       <SidebarInset>{children}</SidebarInset>
     </div>
