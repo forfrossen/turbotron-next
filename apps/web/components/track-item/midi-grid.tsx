@@ -1,7 +1,7 @@
 "use client";
 import {addCcRegions} from "@/components/track-item/utils/create-regions";
 import {useMidiData} from "@/store/config-store";
-import {wavesurferAtom} from "@/store/wavesurfer/wavesurfer.state";
+import {waveSurferAtom} from "@/store/wavesurfer/wavesurfer.state";
 import {useAtomValue} from "jotai";
 import {isNil} from "lodash";
 import React, {useEffect} from "react";
@@ -12,7 +12,7 @@ const MidiGrid: React.FC = () => {
   const trackIndex = 0; // Assuming you want to display the first track
   const track = midiData?.tracks[trackIndex];
   const controlChanges = track?.controlChanges;
-  const wavesurfer = useAtomValue(wavesurferAtom);
+  const wavesurfer = useAtomValue(waveSurferAtom);
 
   useEffect(() => {
     if (!wavesurfer) return;

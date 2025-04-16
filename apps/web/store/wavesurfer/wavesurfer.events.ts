@@ -1,30 +1,61 @@
-import { myStore } from '@/components/providers/providers';
-import { Atom } from 'jotai';
-import { Observable } from 'rxjs';
-import { AtomFactory } from './atom-factory';
-import { WaveSurferObservableFactory } from './wavesurfer.rxjs-faccory';
-import { wavesurferAtom } from './wavesurfer.state';
+'use client'
+import {atomFamily, atomWithObservable} from 'jotai/utils';
+import {fromEventPattern, tap} from 'rxjs';
+import {WaveSurferEvents} from 'wavesurfer.js';
+import {waveSurferAtom} from './wavesurfer.state';
 
-export const allWaveSurferEvents = [
-  'play',
-  'pause',
-  'ready',
-  'region-created',
-  'region-updated',
-  'audioprocess',
-  'interaction',
-  'loading',
-  'finish',
-] as const
+const waveSurferEvents: (keyof WaveSurferEvents)[] = [
+  'init',
+  "load",
+  "loading",
+  "decode",
+  "ready",
+  "redraw",
+  "redrawcomplete",
+  "play",
+  "pause",
+  "finish",
+  "timeupdate",
+  "audioprocess",
+  "seeking",
+  "interaction",
+  "click",
+  "dblclick",
+  "drag",
+  "dragstart",
+  "dragend",
+  "scroll",
+  "zoom",
+  "destroy",
+  "error"
+]
 
-export const createWaveSurferEvent$ = ( event: string ) => new Observable<any>()
+// export type WaveSurferEventAtomMap = {
+//   [ K in keyof WaveSurferEvents ]: ReturnType<typeof atomWithObservable<any>>
+// }
 
-export const waveSurferEvents$ = Object.fromEntries(
-  allWaveSurferEvents.map( ( event ) => [ event, createWaveSurferEvent$( event ) ] )
-) as Record<typeof allWaveSurferEvents[ number ], Observable<any> | Atom<unknown>>
-
-const wavesurfer = myStore.get( wavesurferAtom );
-const atomFactory = new AtomFactory();
-const wsFactory = new WaveSurferObservableFactory();
-waveSurferEvents$.play = atomFactory.createAtom( wsFactory.getEventObservable( "play", () => wavesurfer ) );
-const onReadyAtom = atomFactory.createAtom( wsFactory.getEventObservable( "ready", () => wavesurfer ) );
+export const waveSurferEventsFamilyAtom = atomFamily(
+  (params: {event: keyof WaveSurferEvents, initialValue: unknown}) => {
+    return atomWithObservable((get) => {
+      const instance = get(waveSurferAtom)
+      // const instance = params.instance
+      const event = params.event as keyof WaveSurferEvents;
+      if (!instance) {
+        console.log("Wavesurfer instance not found while subscribing to event", event);
+        return fromEventPattern<number>(() => {})
+      }
+      console.log("Wavesurfer instance found. returning from eventPattern for event", event);
+      return fromEventPattern<number>(
+        (handler) => instance.on(event, handler),
+        (handler) => instance.un(event, handler),
+      ).pipe(
+        tap((value) => {
+          console.log("Wavesurfer event", event, "fired with value", value);
+        })
+      )
+    }, {
+      initialValue: params.initialValue,
+    })
+  },
+  (a, b) => a.event === b.event
+)

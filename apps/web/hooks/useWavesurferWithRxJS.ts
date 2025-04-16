@@ -1,6 +1,6 @@
 "use client";
 import { useLoadedSongUrl, useTrackHeight } from "@/store/config-store";
-import { wavesurferAtom } from "@/store/wavesurfer/wavesurfer.state";
+import { waveSurferAtom } from "@/store/wavesurfer/wavesurfer.state";
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useRef } from "react";
 import WaveSurfer, { WaveSurferOptions } from "wavesurfer.js";
@@ -11,8 +11,8 @@ import ZoomPlugin from "wavesurfer.js/dist/plugins/zoom";
 import { useIsMounted } from "./useIsMounted";
 
 export const useWavesurferWithRxJS = () => {
+  const [ wavesurfer, setWavesurfer ] = useAtom( waveSurferAtom );
   const isMounted = useIsMounted();
-  const [ wavesurfer, setWavesurfer ] = useAtom( wavesurferAtom );
   const url = useLoadedSongUrl();
   const trackHeight = useTrackHeight();
   const waveColor = "purple";
@@ -77,6 +77,7 @@ export const useWavesurferWithRxJS = () => {
       console.debug( "[ERROR] Component is not mounted" );
       return;
     }
+
     if ( !containerRef.current ) {
       console.debug( "[ERROR] Container reference is null" );
       return;
@@ -85,6 +86,13 @@ export const useWavesurferWithRxJS = () => {
     if ( !wavesurfer ) {
       setWavesurfer( WaveSurfer.create( { ...waveSurferOptions, container: containerRef.current! } ) );
     }
+
+    return () => {
+      if ( !wavesurfer ) return;
+      wavesurfer.destroy()
+      setWavesurfer( null )
+    }
+
   }, [ wavesurfer, containerRef, isMounted ] );
 
   return {

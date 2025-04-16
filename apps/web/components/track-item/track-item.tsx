@@ -1,5 +1,3 @@
-import MidiGrid from "@/components/track-item/midi-grid";
-import MidiScheduler from "@/components/track-item/midi-scheduler";
 import {useTrackHeight} from "@/store/config-store";
 import {Subscribe} from "@react-rxjs/core";
 import {Card, CardContent} from "@repo/ui/components/card";
@@ -16,8 +14,8 @@ export const TrackItem = ({trackId, ...restProps}: Props) => {
       <CardContent className="m-2">
         <div className="container mx-auto p-4 overflow-hidden">
           <Subscribe>
-            <MidiGrid />
-            <MidiScheduler />
+            {/* <MidiGrid />
+            <MidiScheduler /> */}
           </Subscribe>
         </div>
       </CardContent>
