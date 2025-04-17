@@ -1,4 +1,5 @@
 "use client";
+import {useTransportMachine} from "@/hooks/useTransportMachine";
 import {Skeleton} from "@repo/ui/components/skeleton";
 import {FileWarningIcon} from "lucide-react";
 import {Suspense} from "react";
@@ -7,6 +8,8 @@ import {PlaybackControls} from "./playback-controls";
 import {PlaybackDuration} from "./playback-duration";
 
 const Transport = () => {
+  useTransportMachine();
+
   return (
     <>
       <PlaybackControls />

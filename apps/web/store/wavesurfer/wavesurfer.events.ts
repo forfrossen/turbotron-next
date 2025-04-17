@@ -50,7 +50,7 @@ export const waveSurferEventsFamilyAtom = atomFamily(
         (handler) => instance.un(event, handler),
       ).pipe(
         tap((value) => {
-          console.log("Wavesurfer event", event, "fired with value", value);
+          // console.log("Wavesurfer event", event, "fired with value", value);
         })
       )
     }, {

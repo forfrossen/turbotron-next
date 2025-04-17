@@ -11,5 +11,4 @@ export const waveSurferDurationAtom = atom((get) => {
 	return instance.getDuration() ?? 0;
 });
 
-export const waveSurferIsPlayingAtom = atom((get) => get(waveSurferAtom)?.isPlaying() ?? false);
-
+export const waveSurferSetPlayingAtom = atom((get) => get(waveSurferAtom)?.isPlaying() ?? false);
