@@ -1,31 +1,35 @@
 "use client";
-import { useLoadedSongUrl, useTrackHeight } from "@/store/config-store";
-import { waveSurferAtom } from "@/store/wavesurfer/wavesurfer.state";
-import { useAtom } from "jotai";
-import { useEffect, useMemo, useRef } from "react";
-import WaveSurfer, { WaveSurferOptions } from "wavesurfer.js";
+import {useLoadedSongUrl, useTrackHeight} from "@/store/config-store";
+import {waveSurferMachineAtom} from "@/store/wavesurfer/wavesurfer.machine";
+import {WaveSurferUserEvents} from "@/store/wavesurfer/wavesurfer.machine.events";
+import {useAtom} from "jotai";
+import {useEffect, useMemo, useRef} from "react";
+import {WaveSurferOptions} from "wavesurfer.js";
 import Minimap from "wavesurfer.js/dist/plugins/minimap";
 import RegionsPlugin from "wavesurfer.js/dist/plugins/regions";
 import TimelinePlugin from "wavesurfer.js/dist/plugins/timeline";
 import ZoomPlugin from "wavesurfer.js/dist/plugins/zoom";
-import { useIsMounted } from "./useIsMounted";
+import {useIsMounted} from "./useIsMounted";
 
 export const useWavesurferWithRxJS = () => {
-  const [ wavesurfer, setWavesurfer ] = useAtom( waveSurferAtom );
+  // const [ wavesurfer, setWavesurfer ] = useAtom( waveSurferAtom );
+  const [ state, send ] = useAtom(waveSurferMachineAtom);
+  const wavesurfer = state.context.waveSurfer;
+
   const isMounted = useIsMounted();
   const url = useLoadedSongUrl();
   const trackHeight = useTrackHeight();
   const waveColor = "purple";
-  const height = parseInt( trackHeight.replace( /rem/g, "" ) ) * 10;
-  const containerRef = useRef<HTMLDivElement | null>( null );
+  const height = parseInt(trackHeight.replace(/rem/g, "")) * 10;
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const minimap = Minimap.create( {
+  const minimap = Minimap.create({
     height: 20,
     waveColor: "#ddd",
     progressColor: "#999"
-  } );
+  });
 
-  const topTimeline = TimelinePlugin.create( {
+  const topTimeline = TimelinePlugin.create({
     height: 20,
     insertPosition: "beforebegin",
     timeInterval: 10,
@@ -35,9 +39,9 @@ export const useWavesurferWithRxJS = () => {
       fontSize: "20px",
       color: "#2D5B88"
     }
-  } );
+  });
 
-  const bottomTimeline = TimelinePlugin.create( {
+  const bottomTimeline = TimelinePlugin.create({
     height: 10,
     timeInterval: 5,
     primaryLabelInterval: 1,
@@ -45,16 +49,16 @@ export const useWavesurferWithRxJS = () => {
       fontSize: "10px",
       color: "#6A3274"
     }
-  } );
+  });
 
-  const zoomPlugin = ZoomPlugin.create( {
+  const zoomPlugin = ZoomPlugin.create({
     scale: 0.5,
     maxZoom: 100
-  } );
+  });
 
   const regions = RegionsPlugin.create();
 
-  const waveSurferOptions: Partial<WaveSurferOptions> = useMemo( () => ( {
+  const waveSurferOptions: Partial<WaveSurferOptions> = useMemo(() => ({
     url,
     waveColor,
     height,
@@ -69,31 +73,34 @@ export const useWavesurferWithRxJS = () => {
       // zoomPlugin,
       regions
     ]
-  } ), [ url, waveColor, height ] );
+  }), [ url, waveColor, height ]);
 
 
-  useEffect( () => {
-    if ( !isMounted ) {
-      console.debug( "[ERROR] Component is not mounted" );
+  useEffect(() => {
+    if (!isMounted) {
+      console.debug("[ERROR] Component is not mounted");
       return;
     }
 
-    if ( !containerRef.current ) {
-      console.debug( "[ERROR] Container reference is null" );
+    if (!containerRef.current) {
+      console.debug("[ERROR] Container reference is null");
       return;
     }
 
-    if ( !wavesurfer ) {
-      setWavesurfer( WaveSurfer.create( { ...waveSurferOptions, container: containerRef.current! } ) );
+    if (!wavesurfer) {
+      console.debug("[INFO] Creating WaveSurfer instance");
+      send(WaveSurferUserEvents.init(containerRef.current, url));
+      // setWavesurfer(WaveSurfer.create({...waveSurferOptions, container: containerRef.current!}));
     }
 
     return () => {
-      if ( !wavesurfer ) return;
-      wavesurfer.destroy()
-      setWavesurfer( null )
+      if (!wavesurfer) return;
+      // wavesurfer.destroy()
+      // setWavesurfer(null)
+      send(WaveSurferUserEvents.destroy());
     }
 
-  }, [ wavesurfer, containerRef, isMounted ] );
+  }, [ wavesurfer, containerRef, isMounted ]);
 
   return {
     containerRef,

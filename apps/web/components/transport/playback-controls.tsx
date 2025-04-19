@@ -1,6 +1,6 @@
 "use client";
-import {transportMachineAtom} from "@/store/wavesurfer/transport.machine";
 import {wavesurferSetPauseAtom, wavesurferSetPlayAtom} from "@/store/wavesurfer/wavesurfer.actions";
+import {waveSurferMachineAtom} from "@/store/wavesurfer/wavesurfer.machine";
 import {useAtomValue} from "jotai";
 import {FileQuestionIcon, Loader2, Pause} from "lucide-react";
 import {Icons} from "../icons";
@@ -8,8 +8,9 @@ import {Icons} from "../icons";
 export const PlaybackControls = () => {
   const setPlaying = useAtomValue(wavesurferSetPlayAtom);
   const setPause = useAtomValue(wavesurferSetPauseAtom);
-  const transportMachine = useAtomValue(transportMachineAtom);
+  const transportMachine = useAtomValue(waveSurferMachineAtom);
   const transportState = transportMachine.value;
+
   const isPlaying = transportMachine.matches("playing");
   const isPaused = transportMachine.matches("paused");
   const isReady = transportMachine.matches("ready");

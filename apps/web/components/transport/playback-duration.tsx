@@ -1,13 +1,13 @@
 "use client";
 import {useWaveSurferEvent} from "@/hooks/useWaveSurferEvent";
-import {transportMachineAtom} from "@/store/wavesurfer/transport.machine";
+import {waveSurferMachineAtom} from "@/store/wavesurfer/wavesurfer.machine";
 import {waveSurferAtom} from "@/store/wavesurfer/wavesurfer.state";
 import {useAtomValue} from "jotai";
 
 export const PlaybackDuration = () => {
   const duration = useAtomValue(waveSurferAtom)?.getDuration() ?? 0;
-  const transportMachine = useAtomValue(transportMachineAtom);
-  const isPlaying = transportMachine.matches("playing");
+  const waveSurferMachine = useAtomValue(waveSurferMachineAtom);
+  const isPlaying = waveSurferMachine?.matches("playing");
 
   // const isPlaying = useWaveSurferEvent<boolean>("play", false);
   const isReady = useWaveSurferEvent<boolean>("ready", false);
