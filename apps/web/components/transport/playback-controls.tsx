@@ -1,23 +1,21 @@
 "use client";
-import {wavesurferSetPauseAtom, wavesurferSetPlayAtom} from "@/store/wavesurfer/wavesurfer.actions";
 import {waveSurferMachineAtom} from "@/store/wavesurfer/wavesurfer.machine";
-import {useAtomValue} from "jotai";
+import {WaveSurferUserEvents} from "@/store/wavesurfer/wavesurfer.machine.events";
+import {useAtom} from "jotai";
 import {FileQuestionIcon, Loader2, Pause} from "lucide-react";
 import {Icons} from "../icons";
 
 export const PlaybackControls = () => {
-  const setPlaying = useAtomValue(wavesurferSetPlayAtom);
-  const setPause = useAtomValue(wavesurferSetPauseAtom);
-  const transportMachine = useAtomValue(waveSurferMachineAtom);
-  const transportState = transportMachine.value;
+  const [state, send] = useAtom(waveSurferMachineAtom);
+  const setPlaying = () => send(WaveSurferUserEvents.play());
+  const setPause = () => send(WaveSurferUserEvents.pause());
 
-  const isPlaying = transportMachine.matches("playing");
-  const isPaused = transportMachine.matches("paused");
-  const isReady = transportMachine.matches("ready");
-  const isLoading = transportMachine.matches("loading");
+  const isPlaying = state.matches("playing");
+  const isPaused = state.matches("paused");
+  const isReady = state.matches("ready");
+  const isLoading = state.matches("loading");
 
   const playPauseHandler = () => {
-    console.log("Play/Pause button clicked. TransportMachine has state:", transportState);
     console.log("isPlaying:", isPlaying, "isPaused:", isPaused, "isLoading:", isLoading, "isReady:", isReady);
     if (isPlaying) {
       console.log("Pausing audio");

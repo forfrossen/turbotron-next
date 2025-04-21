@@ -1,7 +1,9 @@
 // Transport events creator functions
 
+import WaveSurfer from "wavesurfer.js";
+
 // Event type constants
-const InternalEvents = {
+export const InternalEvents = {
 	LOAD: 'LOAD',
 	LOADING: 'LOADING',
 	DECODE: 'DECODE',
@@ -21,9 +23,10 @@ const InternalEvents = {
 	ZOOM: 'ZOOM',
 	DESTROY: 'DESTROY',
 	ERROR: 'ERROR',
+	ASSIGN_INSTANCE: 'ASSIGN_INSTANCE',
 } as const;
 
-const UserEvent = {
+export const UserEvent = {
 	INIT: 'INIT',
 	LOAD: 'LOAD',
 	PLAY: 'PLAY',
@@ -34,11 +37,6 @@ const UserEvent = {
 	SET_VOLUME: 'SET_VOLUME',
 	SET_PLAYBACK_RATE: 'SET_PLAYBACK_RATE',
 } as const;
-
-export const CombinedEvents = {
-	WS: InternalEvents,
-	User: UserEvent,
-}
 
 // Define event payload types for each event
 export interface WaveSurferEventPayloads {
@@ -61,6 +59,7 @@ export interface WaveSurferEventPayloads {
 	[ InternalEvents.ZOOM ]: {minPxPerSec: number};
 	[ InternalEvents.DESTROY ]: {};
 	[ InternalEvents.ERROR ]: {error: string};
+	[ InternalEvents.ASSIGN_INSTANCE ]: {waveSurfer: WaveSurfer};
 	[ UserEvent.INIT ]: {container: HTMLElement | string; url: string};
 	[ UserEvent.LOAD ]: {url: string};
 	[ UserEvent.PLAY ]: {};
@@ -75,6 +74,10 @@ export interface WaveSurferEventPayloads {
 export type WaveSurferEvent = {
 	[ K in keyof WaveSurferEventPayloads ]: {type: K} & WaveSurferEventPayloads[ K ]
 }[ keyof WaveSurferEventPayloads ];
+
+export type GenericWaveSurferEvent<K extends keyof WaveSurferEventPayloads> = (
+	type: K, payload: WaveSurferEventPayloads[ K ]) => WaveSurferEvent;
+
 
 // Convert Map to regular object for easier use with xstate
 export const WaveSurferMachineEvents = {
@@ -99,6 +102,8 @@ export const WaveSurferMachineEvents = {
 	zoom: (minPxPerSec: number): WaveSurferEvent => ({type: InternalEvents.ZOOM, minPxPerSec}),
 	destroy: (): WaveSurferEvent => ({type: InternalEvents.DESTROY}),
 	error: (error: string): WaveSurferEvent => ({type: InternalEvents.ERROR, error}),
+	assignInstance: (waveSurfer: WaveSurfer): WaveSurferEvent =>
+		({type: InternalEvents.ASSIGN_INSTANCE, waveSurfer}),
 };
 
 // User-initiated events
@@ -139,12 +144,4 @@ export const WaveSurferUserEvents = {
 		type: UserEvent.SET_PLAYBACK_RATE, rate
 	}),
 };
-
-export const WaveSurferEventsTypes = {
-	...CombinedEvents.WS,
-	...CombinedEvents.User,
-} as const;
-
-// Export everything together for easy access
-export {InternalEvents, UserEvent};
 

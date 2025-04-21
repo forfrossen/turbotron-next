@@ -14,7 +14,7 @@ import {useIsMounted} from "./useIsMounted";
 export const useWavesurferWithRxJS = () => {
   // const [ wavesurfer, setWavesurfer ] = useAtom( waveSurferAtom );
   const [ state, send ] = useAtom(waveSurferMachineAtom);
-  const wavesurfer = state.context.waveSurfer;
+  const wavesurfer = state?.context?.waveSurfer || null;
 
   const isMounted = useIsMounted();
   const url = useLoadedSongUrl();
@@ -94,7 +94,11 @@ export const useWavesurferWithRxJS = () => {
     }
 
     return () => {
-      if (!wavesurfer) return;
+      console.debug("[INFO] Cleaning up WaveSurfer instance");
+      if (!wavesurfer) {
+        console.debug("[ERROR] WaveSurfer instance is null");
+        return;
+      }
       // wavesurfer.destroy()
       // setWavesurfer(null)
       send(WaveSurferUserEvents.destroy());

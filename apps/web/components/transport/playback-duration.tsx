@@ -1,5 +1,4 @@
 "use client";
-import {useWaveSurferEvent} from "@/hooks/useWaveSurferEvent";
 import {waveSurferMachineAtom} from "@/store/wavesurfer/wavesurfer.machine";
 import {waveSurferAtom} from "@/store/wavesurfer/wavesurfer.state";
 import {useAtomValue} from "jotai";
@@ -8,12 +7,12 @@ export const PlaybackDuration = () => {
   const duration = useAtomValue(waveSurferAtom)?.getDuration() ?? 0;
   const waveSurferMachine = useAtomValue(waveSurferMachineAtom);
   const isPlaying = waveSurferMachine?.matches("playing");
+  const isReady = waveSurferMachine?.matches("ready");
+  const time = waveSurferMachine?.context?.currentTime ?? 0;
 
   // const isPlaying = useWaveSurferEvent<boolean>("play", false);
-  const isReady = useWaveSurferEvent<boolean>("ready", false);
-  const time = useWaveSurferEvent<number>("audioprocess", 0);
-
-  if (!isReady) return null;
+  // const isReady = useWaveSurferEvent<boolean>("ready", false);
+  // const time = useWaveSurferEvent<number>("audioprocess", 0);
 
   function formatTime(time: number): import("react").ReactNode {
     const minutes = Math.floor(time / 60);
