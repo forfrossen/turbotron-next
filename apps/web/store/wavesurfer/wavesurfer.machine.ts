@@ -1,451 +1,307 @@
-import {atomWithMachine} from 'jotai-xstate';
-import {isNil} from 'lodash';
-import WaveSurfer, {WaveSurferEvents} from 'wavesurfer.js';
-import {assign, fromCallback, setup, type EventObject} from 'xstate';
+"use client";
+
+import {trackHeight$} from "@/store/config-store";
 import {
-	InternalEvents,
-	UserEvent,
-	WaveSurferEvent,
-	WaveSurferMachineEvents
-} from './wavesurfer.machine.events';
+  assignContainer,
+  assignError,
+  assignInstance,
+  assignLoadingProgress,
+  assignTimeUpdate,
+  assignUrl,
+  destroyWaveSurfer,
+  pausePlayback,
+  seekTo,
+  setPlaybackRate,
+  setTrackHeight,
+  setVolume,
+  startPlayback
+} from "@/store/wavesurfer/wavesurfer.actions";
+import {assertExists} from "@/utils/assert";
+import {parseHeight} from "@/utils/parse-height";
+import {atomWithMachine} from "jotai-xstate";
+import {throttle} from "lodash";
+import WaveSurfer, {WaveSurferEvents} from "wavesurfer.js";
+import {assign, fromCallback, setup, type EventObject} from "xstate";
+import {
+  InternalEvents,
+  systemEvents,
+  SystemEvents,
+  UserEvent,
+  waveSurferMachineEvents,
+  waveSurferUserEvents,
+  WsEvent
+} from "./wavesurfer.machine.events";
 
-export interface WaveSurferMachineContext {
-	error?: string;
-	waveSurfer?: WaveSurfer | null;
-	duration?: number;
-	currentTime?: number;
-	container?: string | HTMLElement;
-	url?: string;
-	loadingProgress?: number;
-	wsEventListenerRef?: any;
+export interface wsMachineContext {
+  error?: string;
+  waveSurfer?: WaveSurfer | null;
+  duration?: number;
+  currentTime?: number;
+  timeUpdateRate: number;
+  container?: string | HTMLElement;
+  url?: string;
+  loadingProgress?: number;
+  wsEventListenerRef?: any;
 }
 
-const debugWsEventHandler = (event: string, ...args: any[]) => {
-	console.debug(`[WaveSurfer Event] ${ event }`, ...args);
+const debugWsEventHandler = (event: string, ...args: any[]) => console.debug(`[WaveSurfer Event] ${event}`, ...args);
+
+const machineEventFnFactory = (wsEvent: keyof WaveSurferEvents) =>
+  waveSurferMachineEvents[wsEvent as keyof typeof waveSurferMachineEvents];
+
+async function initWaveSurfer(context: wsMachineContext, sendBack: (event: EventObject) => void) {
+  try {
+    const {default: WaveSurfer} = await import("wavesurfer.js");
+    const {options, minimap, topTimeline, bottomTimeline, zoomPlugin, regions} = await import(
+      "@/store/wavesurfer/wafesurfer.options"
+    );
+
+    const ws = WaveSurfer.create({
+      ...options,
+      container: context.container!,
+      height: parseHeight(trackHeight$.getValue()),
+      url: context.url!,
+      plugins: [minimap, topTimeline, bottomTimeline, zoomPlugin, regions]
+    });
+
+    sendBack(systemEvents.assignInstance(ws));
+
+    return ws;
+  } catch (err) {
+    sendBack(waveSurferMachineEvents.error((err as Error).message));
+    throw err;
+  }
 }
 
-export const initializeWaveSurfer = fromCallback<EventObject, {context: WaveSurferMachineContext}>(
-	({sendBack, receive, input}) => {
-		console.log(`[initializeWaveSurfer] input:`, input);
+export const initializeWaveSurfer = fromCallback<EventObject, {context: wsMachineContext}>(
+  ({sendBack, receive, input}) => {
+    if (typeof window === "undefined") {
+      return () => {};
+    }
+    let ws: WaveSurfer | null = null;
 
-		const ctx = input.context as WaveSurferMachineContext;
-		if (!ctx) {
-			sendBack(WaveSurferMachineEvents.error("[initializeWaveSurfer] Context is not defined"));
-			return;
-		}
+    const cleanup = (wavesurfer: WaveSurfer, eventHandlerMap: Map<keyof WaveSurferEvents, (...args: any) => void>) => {
+      if (!wavesurfer) {
+        console.debug("[ERROR] WaveSurfer instance is null");
+        return;
+      }
+      console.debug("[INFO] Cleaning up WaveSurfer instance");
+      eventHandlerMap.forEach((_, event) => {
+        wavesurfer.un(event, eventHandlerMap.get(event)!);
+      });
 
-		try {
-			if (ctx.container === undefined) {
-				throw new Error('[initializeWaveSurfer] Container is not defined');
-			}
-			if (ctx.url === undefined) {
-				throw new Error('[initializeWaveSurfer] URL is not defined');
-			}
-			if (ctx.container === null) {
-				throw new Error('[initializeWaveSurfer] Container is null');
-			}
+      trackHeight$.unsubscribe();
+    };
 
-			const wavesurfer = WaveSurfer.create({
-				container: ctx.container!,
-				url: ctx.url,
-			});
+    console.log(`[initializeWaveSurfer] input:`, input);
+    const ctx = input.context;
 
-			if (!wavesurfer) {
-				sendBack(WaveSurferMachineEvents.error("[initializeWaveSurfer] WaveSurfer instance is not created"));
-				return;
-			}
+    try {
+      assertExists(ctx);
+      assertExists(ctx.container);
+      assertExists(ctx.url);
+    } catch (error) {
+      sendBack(waveSurferMachineEvents.error("Error initializing WaveSurfer: " + error));
+      return;
+    }
 
-			sendBack(WaveSurferMachineEvents.assignInstance(wavesurfer));
+    const timeUpdateRate = input.context.timeUpdateRate;
+    const throttleUpdate = Math.round(1000 / timeUpdateRate);
 
+    const handleTimeUpdate = (time: number) => {
+      const currentTime = Math.round(time * timeUpdateRate) / timeUpdateRate;
+      debugWsEventHandler("timeupdate", currentTime);
+      sendBack(waveSurferMachineEvents.timeUpdate(currentTime));
+    };
 
-			const handleError = (error: Error) => {
-				debugWsEventHandler("error", error);
-				sendBack(WaveSurferMachineEvents.error(error.message || "An unknown error occurred"));
-			};
+    const handleError = (error: Error) => {
+      debugWsEventHandler("error", error);
+      sendBack(waveSurferMachineEvents.error(error.message || "An unknown error occurred"));
+    };
 
-			const handleLoad = (url: string) => {
-				debugWsEventHandler("load", url);
-				sendBack(WaveSurferMachineEvents.load(url));
-			};
+    const handleTrackHeightChange = (value: string) => {
+      const height = parseHeight(value);
+      sendBack(waveSurferUserEvents.setTrackHeight(height));
+    };
 
-			const handleLoading = (progress: number) => {
-				debugWsEventHandler("loading", progress);
-				sendBack(WaveSurferMachineEvents.loading(progress));
-			};
+    const eventHandlerMap = new Map<keyof WaveSurferEvents, (...args: any) => void>([
+      ["timeupdate", handleTimeUpdate],
+      [
+        "destroy",
+        () => {
+          console.debug("[INFO] WaveSurfer instance destroyed. Or not...");
+        }
+      ],
+      ["error", handleError]
+    ]);
 
-			const handleDecode = (duration: number) => {
-				debugWsEventHandler("decode", duration);
-				sendBack(WaveSurferMachineEvents.decode(duration));
-			};
+    const genericEventHandlers = Array.from(Object.keys(waveSurferMachineEvents)).filter(
+      (event) => !eventHandlerMap.has(event as keyof WaveSurferEvents)
+    ) as Array<keyof WaveSurferEvents>;
 
-			const handleReady = (duration: number) => {
-				debugWsEventHandler("ready", duration);
-				sendBack(WaveSurferMachineEvents.ready(duration));
-			};
+    const createHandler = (wsEvent: keyof WaveSurferEvents, ...args: any[]) => {
+      debugWsEventHandler(wsEvent, ...args);
+      sendBack((machineEventFnFactory(wsEvent) as any)(...args));
+    };
 
-			const handleRedraw = () => {
-				debugWsEventHandler("redraw");
-				sendBack(WaveSurferMachineEvents.redraw());
-			};
+    const createDynamicHandler = (wsEvent: keyof WaveSurferEvents) =>
+      eventHandlerMap.set(wsEvent, (...args: any[]) => createHandler(wsEvent, ...args));
 
-			const handleRedrawComplete = () => {
-				debugWsEventHandler("redrawcomplete");
-				sendBack(WaveSurferMachineEvents.redrawComplete());
-			};
+    genericEventHandlers.forEach(createDynamicHandler);
 
-			const handlePlay = () => {
-				debugWsEventHandler("play");
-				sendBack(WaveSurferMachineEvents.play());
-			};
+    const setupEventHandlers = (wavesurfer: WaveSurfer) => {
+      ws = wavesurfer;
+      eventHandlerMap.forEach((handler, event) => {
+        wavesurfer.on(event, throttle(handler, throttleUpdate));
+      });
 
-			const handlePause = () => {
-				debugWsEventHandler("pause");
-				sendBack(WaveSurferMachineEvents.pause());
-			};
+      trackHeight$.subscribe(handleTrackHeightChange);
 
-			const handleStop = () => {
-				debugWsEventHandler("stop");
-				sendBack(WaveSurferMachineEvents.stop());
-			};
+      wavesurfer.on("destroy", cleanup.bind(null, wavesurfer, eventHandlerMap));
+    };
 
-			const handleFinish = () => {
-				debugWsEventHandler("finish");
-				sendBack(WaveSurferMachineEvents.finish());
-			};
+    initWaveSurfer(input.context, sendBack)
+      .then(setupEventHandlers)
+      .catch((error) => {
+        debugWsEventHandler("Error initializing WaveSurfer:", error);
+        sendBack(waveSurferMachineEvents.error(error.message || "An unknown error occurred"));
+      });
 
-			const handleTimeUpdate = (currentTime: number) => {
-				debugWsEventHandler("timeupdate", currentTime);
-				sendBack(WaveSurferMachineEvents.timeUpdate(currentTime));
-			};
-
-			const handleSeeking = (currentTime: number) => {
-				debugWsEventHandler("seeking", currentTime);
-				sendBack(WaveSurferMachineEvents.seeking(currentTime));
-			};
-
-			const handleInteraction = (newTime: number) => {
-				debugWsEventHandler("interaction", newTime);
-				sendBack(WaveSurferMachineEvents.interaction(newTime));
-			};
-
-			const handleClick = (relativeX: number) => {
-				debugWsEventHandler("click", relativeX);
-				sendBack(WaveSurferMachineEvents.click(relativeX));
-			};
-
-			const handleDrag = (relativeX: number) => {
-				debugWsEventHandler("drag", relativeX);
-				sendBack(WaveSurferMachineEvents.drag(relativeX));
-			};
-
-			const handleScroll = (visibleStartTime: number, visibleEndTime: number) => {
-				debugWsEventHandler("scroll", visibleStartTime, visibleEndTime);
-				sendBack(WaveSurferMachineEvents.scroll(visibleStartTime, visibleEndTime));
-			};
-
-			const handleZoom = (minPxPerSec: number) => {
-				debugWsEventHandler("zoom", minPxPerSec);
-				sendBack(WaveSurferMachineEvents.zoom(minPxPerSec));
-			};
-
-			const handleDestroy = () => {
-				debugWsEventHandler("destroy");
-				sendBack(WaveSurferMachineEvents.destroy());
-			};
-
-			const eventHandlerMap: Map<keyof WaveSurferEvents, (...args: any) => void> = new Map([
-				[ "error", handleError ],
-				[ "load", handleLoad ],
-				[ "loading", handleLoading ],
-				[ "decode", handleDecode ],
-				[ "ready", handleReady ],
-				[ "redraw", handleRedraw ],
-				[ "redrawcomplete", handleRedrawComplete ],
-				[ "play", handlePlay ],
-				[ "pause", handlePause ],
-				[ "stop", handleStop ],
-				[ "finish", handleFinish ],
-				[ "timeupdate", handleTimeUpdate ],
-				[ "seeking", handleSeeking ],
-				[ "interaction", handleInteraction ],
-				[ "click", handleClick ],
-				[ "drag", handleDrag ],
-				[ "scroll", handleScroll ],
-				[ "zoom", handleZoom ],
-				[ "destroy", handleDestroy ]
-			] as [ keyof WaveSurferEvents, (...args: any) => void ][]);
-
-			eventHandlerMap.forEach((handler, event) => {
-				wavesurfer.on(event, handler);
-			});
-
-			wavesurfer.on('destroy', () => {
-				eventHandlerMap.forEach((_, event) => {
-					wavesurfer.un(event, eventHandlerMap.get(event)!);
-				});
-			});
-
-
-			return () => {
-				eventHandlerMap.forEach((_, event) => {
-					wavesurfer.un(event, eventHandlerMap.get(event)!);
-				});
-			};
-
-		} catch (err) {
-			sendBack(WaveSurferMachineEvents.error(String(err)));
-			return () => {};
-		}
-
-	}
+    return () => {
+      // TODO: Fix this!! waveSurfer is not defined and not accessible from context
+      if (ws) {
+        cleanup(ws, eventHandlerMap);
+      }
+    };
+  }
 );
 
-const debugAction = (action: string) => ({context, event}: {context: WaveSurferMachineContext, event?: EventObject}) => {
-	if (!isNil(event)) {
-		console.debug(`[${ action }] event:`, event);
-	}
-	if (!isNil(context)) {
-		console.debug(`[${ action }] context:`, context);
-	}
-}
+export const createWaveSurferMachine = () =>
+  setup({
+    types: {
+      context: {} as wsMachineContext,
+      events: {} as WsEvent
+    },
+    actions: {
+      assignError: assign(assignError),
+      clearError: assign({error: undefined}),
+      assignLoadingProgress: assign(assignLoadingProgress),
+      assignTimeUpdate: assign(assignTimeUpdate),
+      setContainer: assign(assignContainer),
+      setUrl: assign(assignUrl),
+      play: startPlayback,
+      pause: pausePlayback,
+      assignInstance,
+      seekTo,
+      setVolume,
+      setPlaybackRate,
+      destroyWaveSurfer,
+      setTrackHeight
+    },
 
-export const createWaveSurferMachine = () => setup({
-	types: {
-		context: {} as WaveSurferMachineContext,
-		events: {} as WaveSurferEvent
-	},
-	actions: {
-		assignError: assign(({context, event}: {context: WaveSurferMachineContext, event: WaveSurferEvent}) => {
-			const debugLog = debugAction('assignError');
-			debugLog({context, event});
-			if (event.type === InternalEvents.ERROR) {
-				return {error: event.error};
-			}
-			return {};
-		}),
+    actors: {
+      initializeWaveSurfer
+    }
+  }).createMachine({
+    id: "waveSurfer",
+    initial: "idle",
+    context: {
+      error: undefined,
+      loadingProgress: undefined,
+      waveSurfer: null,
+      container: "",
+      url: undefined,
+      timeUpdateRate: 10
+    },
 
-		clearError: assign({
-			error: undefined,
-		}),
+    states: {
+      idle: {},
+      loading: {},
+      ready: {},
+      playing: {
+        entry: [{type: "play", params: {context: (context: wsMachineContext) => context}}]
+      },
+      paused: {
+        entry: [{type: "pause", params: {context: (context: wsMachineContext) => context}}]
+      },
+      error: {},
 
-		assignLoadingProgress: assign(({context, event}: {context: WaveSurferMachineContext, event: WaveSurferEvent}) => {
-			const debugLog = debugAction('assignLoadingProgress');
-			debugLog({context, event});
-			if (event.type === InternalEvents.LOADING) {
-				return {loadingProgress: event.progress};
-			}
-			return {};
-		}),
+      init: {
+        entry: assign({
+          wsEventListenerRef: ({spawn, context}) =>
+            spawn(initializeWaveSurfer, {
+              input: {context}
+            })
+        })
+      }
+    },
 
-		play: ({context}: {context: WaveSurferMachineContext}) => {
-			const debugLog = debugAction('play');
-			debugLog({context});
-			if (context.waveSurfer) {
-				console.debug("[INFO] Playing audio");
-				context.waveSurfer.play();
-			} else {
-				console.debug("[ERROR] WaveSurfer instance is not defined");
-			}
-		},
+    on: {
+      [UserEvent.INIT]: {
+        actions: [assign(assignContainer), assign(assignUrl)],
+        target: ".init"
+      },
 
-		pause: ({context}: {context: WaveSurferMachineContext}) => {
-			const debugLog = debugAction('pause');
-			debugLog({context});
-			if (context.waveSurfer) {
-				console.debug("[INFO] Pausing audio");
-				context.waveSurfer.pause();
-			} else {
-				console.debug("[ERROR] WaveSurfer instance is not defined");
-			}
+      [SystemEvents.ASSIGN_INSTANCE]: {
+        actions: assign(assignInstance)
+      },
 
-		},
+      [UserEvent.LOAD]: {
+        actions: assign(assignUrl)
+      },
 
-		seekTo: ({context, event}: {context: WaveSurferMachineContext, event: WaveSurferEvent}) => {
-			const debugLog = debugAction('seekTo');
-			debugLog({context, event});
-			if (context.waveSurfer && event.type === UserEvent.SEEK) {
-				context.waveSurfer.seekTo(event.time);
-			}
-		},
+      [UserEvent.PLAY]: {
+        target: ".playing"
+      },
 
-		setVolume: ({context, event}: {context: WaveSurferMachineContext, event: WaveSurferEvent}) => {
-			const debugLog = debugAction('setVolume');
-			debugLog({context, event});
-			if (context.waveSurfer && event.type === UserEvent.SET_VOLUME) {
-				context.waveSurfer.setVolume(event.volume);
-			}
-		},
+      [UserEvent.PAUSE]: {
+        target: ".paused"
+      },
 
-		setPlaybackRate: ({context, event}: {context: WaveSurferMachineContext, event: WaveSurferEvent}) => {
-			const debugLog = debugAction('setPlaybackRate');
-			debugLog({context, event});
-			if (context.waveSurfer && event.type === UserEvent.SET_PLAYBACK_RATE) {
-				context.waveSurfer.setPlaybackRate(event.rate);
-			}
-		},
+      [UserEvent.SEEK]: {
+        actions: "seekTo"
+      },
 
-		destroyWaveSurfer: ({context}: {context: WaveSurferMachineContext}) => {
-			const debugLog = debugAction('destroyWaveSurfer');
-			debugLog({context});
-			if (context.waveSurfer) {
-				context.waveSurfer.destroy();
-			}
-		}
-	},
+      [UserEvent.SET_VOLUME]: {
+        actions: "setVolume"
+      },
 
-	actors: {
-		initializeWaveSurfer
-	}
+      [UserEvent.SET_PLAYBACK_RATE]: {
+        actions: "setPlaybackRate"
+      },
 
-}).createMachine({
-	id: 'waveSurfer',
-	initial: 'idle',
-	context: {
-		error: undefined,
-		loadingProgress: undefined,
-		waveSurfer: null,
-		container: "",
-		url: undefined,
-	},
+      [UserEvent.SET_TRACK_HEIGHT]: {
+        actions: "setTrackHeight"
+      },
 
-	states: {
-		idle: {},
-		loading: {},
-		ready: {},
-		playing: {
-			entry: [
-				{type: 'play', params: {context: (context: WaveSurferMachineContext) => context}}
-			]
-		},
-		paused: {
-			entry: [
-				{type: 'pause', params: {context: (context: WaveSurferMachineContext) => context}}
-			]
-		},
-		error: {},
+      [UserEvent.DESTROY]: {
+        target: ".idle",
+        actions: "destroyWaveSurfer"
+      },
 
-		init: {
-			entry: [
-				assign({
-					wsEventListenerRef: ({spawn, context}) => spawn(initializeWaveSurfer, {
-						input: {context},
-					}),
-				})
-			],
-			// spawnChild(initializeWaveSurfer, {id: 'initializeWaveSurfer'}),
-			// 	{input: (context: WaveSurferMachineContext) => context,
-			// params: {context: (context: WaveSurferMachineContext) => context}})
+      [InternalEvents.ERROR]: {
+        target: ".error",
+        actions: "assignError"
+      },
 
-			// {
-			// 	src: initializeWaveSurfer,
-			// 	input: (context: WaveSurferMachineContext) => (context),
-			// },
-		},
-	},
+      [InternalEvents.LOADING]: {
+        actions: "assignLoadingProgress"
+      },
 
-	on: {
-		[ UserEvent.INIT ]: {
-			actions: assign(({context, event}: {context: WaveSurferMachineContext, event: WaveSurferEvent}) => {
-				console.log(`[UserEvent.INIT] event:`, event);
-				console.log(`[UserEvent.INIT] context:`, context);
-				if (event.type !== UserEvent.INIT) {
-					return {};
-				}
-				if (!event.container) {
-					throw new Error('Container is not defined');
-				}
-				if (!event.url) {
-					throw new Error('URL is not defined');
-				}
-				return {
-					container: event.container,
-					url: event.url,
-				};
-			}),
-			target: '.init',
-		},
+      [InternalEvents.READY]: {
+        target: ".ready"
+      },
 
-		[ InternalEvents.ASSIGN_INSTANCE ]: {
-			actions: assign(({context, event}: {context: WaveSurferMachineContext, event: WaveSurferEvent}) => {
-				if (event.type === InternalEvents.ASSIGN_INSTANCE) {
-					return {
-						waveSurfer: event.waveSurfer
-					};
-				}
-				return {};
-			}),
-		},
+      [InternalEvents.FINISH]: {
+        target: ".paused"
+      },
 
-		[ UserEvent.LOAD ]: {
-			actions: assign(({event}: {event: WaveSurferEvent}) => {
-				if (event.type === UserEvent.LOAD) {
-					return {
-						url: event.url
-					};
-				}
-				return {};
-			})
-		},
-
-		[ UserEvent.PLAY ]: {
-			target: '.playing',
-		},
-
-		[ UserEvent.PAUSE ]: {
-			target: '.paused',
-		},
-
-		[ UserEvent.SEEK ]: {
-			actions: 'seekTo'
-		},
-
-		[ UserEvent.SET_VOLUME ]: {
-			actions: 'setVolume'
-		},
-
-		[ UserEvent.SET_PLAYBACK_RATE ]: {
-			actions: 'setPlaybackRate'
-		},
-
-		[ UserEvent.DESTROY ]: {
-			target: '.idle',
-			actions: 'destroyWaveSurfer'
-		},
-
-		[ InternalEvents.ERROR ]: {
-			target: '.error',
-			actions: 'assignError'
-		},
-
-		[ InternalEvents.LOADING ]: {
-			actions: 'assignLoadingProgress'
-		},
-
-		[ InternalEvents.READY ]: {
-			target: '.ready'
-		},
-
-		[ InternalEvents.FINISH ]: {
-			target: '.paused'
-		},
-
-		[ InternalEvents.STOP ]: {
-			target: '.paused'
-		},
-
-		[ InternalEvents.TIMEUPDATE ]: {
-			actions: assign(({context, event}: {context: WaveSurferMachineContext, event: WaveSurferEvent}) => {
-				if (event.type === InternalEvents.TIMEUPDATE) {
-					return {currentTime: event.currentTime};
-				}
-				return {};
-			})
-		},
-
-	}
-});
-
+      [InternalEvents.TIMEUPDATE]: {
+        actions: "assignTimeUpdate"
+      }
+    }
+  });
 
 export const waveSurferMachineAtom = atomWithMachine((get) => {
-	return createWaveSurferMachine();
+  return createWaveSurferMachine();
 });

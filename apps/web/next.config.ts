@@ -3,7 +3,7 @@ import { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@repo/ui", "@repo/database", "geist", "xstate"],
-  serverExternalPackages: ["thread-stream", "pino", "pino-worker", "pino-file", "pino-pretty"],
+  serverExternalPackages: ["thread-stream", "pino", "pino-worker", "pino-file", "pino-pretty", "wavesurfer.js"],
   allowedDevOrigins: ["localhost", "192.168.178.81", "*.euw.devtunnels.ms"],
   experimental: {
     reactCompiler: false,

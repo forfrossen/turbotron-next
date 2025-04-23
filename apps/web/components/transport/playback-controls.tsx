@@ -1,14 +1,14 @@
 "use client";
-import {waveSurferMachineAtom} from "@/store/wavesurfer/wavesurfer.machine";
-import {WaveSurferUserEvents} from "@/store/wavesurfer/wavesurfer.machine.events";
-import {useAtom} from "jotai";
-import {FileQuestionIcon, Loader2, Pause} from "lucide-react";
-import {Icons} from "../icons";
+import { waveSurferMachineAtom } from "@/store/wavesurfer/wavesurfer.machine";
+import { waveSurferUserEvents } from "@/store/wavesurfer/wavesurfer.machine.events";
+import { useAtom } from "jotai";
+import { FileQuestionIcon, Loader2, Pause } from "lucide-react";
+import { Icons } from "../icons";
 
 export const PlaybackControls = () => {
   const [state, send] = useAtom(waveSurferMachineAtom);
-  const setPlaying = () => send(WaveSurferUserEvents.play());
-  const setPause = () => send(WaveSurferUserEvents.pause());
+  const setPlaying = () => send(waveSurferUserEvents.play());
+  const setPause = () => send(waveSurferUserEvents.pause());
 
   const isPlaying = state.matches("playing");
   const isPaused = state.matches("paused");
