@@ -26,7 +26,7 @@ export const useWaveSurferActions = () => {
   };
 };
 
-type ContextWithEvent = {
+export type ContextWithEvent = {
   context: wsMachineContext;
   event: WsEvent;
 };
