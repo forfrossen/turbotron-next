@@ -2,38 +2,18 @@
 
 import {assertExists} from "@/utils/assert";
 import {produce} from "immer";
-import {useAtom} from "jotai";
-import {isNil} from "lodash";
+import {assign, isNil} from "lodash";
 import {assertEvent, EventObject} from "xstate";
-import {waveSurferMachineAtom, wsMachineContext} from "./wavesurfer.machine";
-import {InternalEvents, SystemEvents, UserEvent, waveSurferUserEvents, WsEvent} from "./wavesurfer.machine.events";
-export const useWaveSurferActions = () => {
-  const [_, send] = useAtom(waveSurferMachineAtom);
-
-  return {
-    init: (container: HTMLElement | string, url: string) => send(waveSurferUserEvents.init(container, url)),
-    load: (url: string) => send(waveSurferUserEvents.load(url)),
-    play: () => send(waveSurferUserEvents.play()),
-    pause: () => send(waveSurferUserEvents.pause()),
-    seek: (time: number) => send(waveSurferUserEvents.seek(time)),
-    zoom: (minPxPerSec: number) => send(waveSurferUserEvents.zoom(minPxPerSec)),
-    destroy: () => send(waveSurferUserEvents.destroy()),
-    setVolume: (volume: number) => send(waveSurferUserEvents.setVolume(volume)),
-    setPlaybackRate: (rate: number) => send(waveSurferUserEvents.setPlaybackRate(rate)),
-    setTrackHeight: (height: number) => send(waveSurferUserEvents.setTrackHeight(height)),
-    setContainer: (container: HTMLElement | string) => send(waveSurferUserEvents.setContainer(container)),
-    setUrl: (url: string) => send(waveSurferUserEvents.setUrl(url))
-  };
-};
-
+import {WsMachineContext} from "./wavesurfer.machine";
+import {InternalEvents, SystemEvents, UserEvent, WsMachineEvent} from "./wavesurfer.machine.events";
 export type ContextWithEvent = {
-  context: wsMachineContext;
-  event: WsEvent;
+  context: WsMachineContext;
+  event: WsMachineEvent;
 };
 
 export const debugAction =
   (action: string) =>
-  ({context, event}: {context: wsMachineContext; event?: EventObject}) => {
+  ({context, event}: {context: WsMachineContext; event?: EventObject}) => {
     if (!isNil(event)) {
       console.debug(`[${action}] event:`, event);
     }
@@ -48,6 +28,13 @@ export const assignError = ({context, event}: ContextWithEvent) =>
     const debugLog = debugAction("assignError");
     debugLog({context, event});
     draft.error = event.error;
+  });
+
+export const clearError = ({context}: {context: WsMachineContext}) =>
+  produce(context, (draft) => {
+    const debugLog = debugAction("clearError");
+    debugLog({context});
+    draft.error = undefined;
   });
 
 export const assignLoadingProgress = ({context, event}: ContextWithEvent) =>
@@ -135,7 +122,7 @@ export const setPlaybackRate = ({context, event}: ContextWithEvent) => {
   }
 };
 
-export const destroyWaveSurfer = ({context}: {context: wsMachineContext}) => {
+export const destroyWaveSurfer = ({context}: {context: WsMachineContext}) => {
   const debugLog = debugAction("destroyWaveSurfer");
   debugLog({context});
   if (context.waveSurfer) {
@@ -161,3 +148,42 @@ export const assignTimeUpdate = ({context, event}: ContextWithEvent) =>
     assertEvent(event, InternalEvents.TIMEUPDATE);
     draft.currentTime = event.currentTime;
   });
+
+// export const WaveSurferMachineActions = {
+//   assignError: assignError,
+//   assignLoadingProgress: assignLoadingProgress,
+//   assignUrl: assignUrl,
+//   clearError: clearError,
+//   setContainer: assignContainer,
+//   setUrl: assignUrl,
+//   play: startPlayback,
+//   pause: pausePlayback,
+//   assignInstance: assignInstance,
+//   seekTo: seekTo,
+//   setVolume: setVolume,
+//   setPlaybackRate: setPlaybackRate,
+//   destroyWaveSurfer: destroyWaveSurfer,
+//   setTrackHeight: setTrackHeight,
+//   assignTimeUpdate: assignTimeUpdate
+// } as const;
+
+export const WsMachineActions = {
+  assignError: assign(assignError),
+  clearError: assign(clearError),
+  assignLoadingProgress: assign(assignLoadingProgress),
+  assignTimeUpdate: assign(assignTimeUpdate),
+  setContainer: assign(assignContainer),
+  setUrl: assign(assignUrl),
+  play: startPlayback,
+  pause: pausePlayback,
+  assignInstance,
+  seekTo,
+  setVolume,
+  setPlaybackRate,
+  destroyWaveSurfer,
+  setTrackHeight
+} as const;
+
+export type WsMachineAction = {
+  [K in keyof typeof WsMachineActions]: (typeof WsMachineActions)[K];
+};

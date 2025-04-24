@@ -1,5 +1,5 @@
 import {trackHeight$} from "@/store/config-store";
-import {wsMachineContext} from "@/store/wavesurfer/wavesurfer.machine";
+import {WsMachineContext} from "@/store/wavesurfer/wavesurfer.machine";
 import {waveSurferMachineEvents, waveSurferUserEvents} from "@/store/wavesurfer/wavesurfer.machine.events";
 import {assertExists} from "@/utils/assert";
 import {parseHeight} from "@/utils/parse-height";
@@ -19,7 +19,7 @@ export const setupEventListeners = ({
 }: {
   sendBack: (event: AnyEventObject) => void;
   receive: unknown;
-  input: {context: wsMachineContext};
+  input: {context: WsMachineContext};
 }) => {
   if (typeof window === "undefined") {
     return () => {};
@@ -107,4 +107,4 @@ export const setupEventListeners = ({
   };
 };
 
-export const setupEventListenersActor = fromCallback<EventObject, {context: wsMachineContext}>(setupEventListeners);
+export const setupEventListenersActor = fromCallback<EventObject, {context: WsMachineContext}>(setupEventListeners);

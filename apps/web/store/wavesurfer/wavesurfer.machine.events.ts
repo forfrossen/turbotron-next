@@ -79,102 +79,102 @@ export interface WaveSurferEventPayloads {
   [SystemEvents.ASSIGN_INSTANCE]: {waveSurfer: WaveSurfer};
 }
 
-export type WsEvent = {
+export type WsMachineEvent = {
   [K in keyof WaveSurferEventPayloads]: {type: K} & WaveSurferEventPayloads[K];
 }[keyof WaveSurferEventPayloads];
 
 export type GenericWaveSurferEvent<K extends keyof WaveSurferEventPayloads> = (
   type: K,
   payload: WaveSurferEventPayloads[K]
-) => WsEvent;
+) => WsMachineEvent;
 
 // Convert Map to regular object for easier use with xstate
 export const waveSurferMachineEvents = {
   // Internal events
-  load: (url: string): WsEvent => ({type: InternalEvents.LOAD, url}),
-  loading: (progress: number): WsEvent => ({type: InternalEvents.LOADING, progress}),
-  decode: (duration: number): WsEvent => ({type: InternalEvents.DECODE, duration}),
-  ready: (duration: number): WsEvent => ({type: InternalEvents.READY, duration}),
-  redraw: (): WsEvent => ({type: InternalEvents.REDRAW}),
-  redrawComplete: (): WsEvent => ({type: InternalEvents.REDRAW_COMPLETE}),
-  play: (): WsEvent => ({type: InternalEvents.PLAY}),
-  pause: (): WsEvent => ({type: InternalEvents.PAUSE}),
-  finish: (): WsEvent => ({type: InternalEvents.FINISH}),
-  timeUpdate: (currentTime: number): WsEvent => ({type: InternalEvents.TIMEUPDATE, currentTime}),
-  seeking: (currentTime: number): WsEvent => ({type: InternalEvents.SEEKING, currentTime}),
-  interaction: (newTime: number): WsEvent => ({type: InternalEvents.INTERACTION, newTime}),
-  click: (relativeX: number): WsEvent => ({type: InternalEvents.CLICK, relativeX}),
-  drag: (relativeX: number): WsEvent => ({type: InternalEvents.DRAG, relativeX}),
-  scroll: (visibleStartTime: number, visibleEndTime: number): WsEvent => ({
+  load: (url: string): WsMachineEvent => ({type: InternalEvents.LOAD, url}),
+  loading: (progress: number): WsMachineEvent => ({type: InternalEvents.LOADING, progress}),
+  decode: (duration: number): WsMachineEvent => ({type: InternalEvents.DECODE, duration}),
+  ready: (duration: number): WsMachineEvent => ({type: InternalEvents.READY, duration}),
+  redraw: (): WsMachineEvent => ({type: InternalEvents.REDRAW}),
+  redrawComplete: (): WsMachineEvent => ({type: InternalEvents.REDRAW_COMPLETE}),
+  play: (): WsMachineEvent => ({type: InternalEvents.PLAY}),
+  pause: (): WsMachineEvent => ({type: InternalEvents.PAUSE}),
+  finish: (): WsMachineEvent => ({type: InternalEvents.FINISH}),
+  timeUpdate: (currentTime: number): WsMachineEvent => ({type: InternalEvents.TIMEUPDATE, currentTime}),
+  seeking: (currentTime: number): WsMachineEvent => ({type: InternalEvents.SEEKING, currentTime}),
+  interaction: (newTime: number): WsMachineEvent => ({type: InternalEvents.INTERACTION, newTime}),
+  click: (relativeX: number): WsMachineEvent => ({type: InternalEvents.CLICK, relativeX}),
+  drag: (relativeX: number): WsMachineEvent => ({type: InternalEvents.DRAG, relativeX}),
+  scroll: (visibleStartTime: number, visibleEndTime: number): WsMachineEvent => ({
     type: InternalEvents.SCROLL,
     visibleStartTime,
     visibleEndTime
   }),
-  zoom: (minPxPerSec: number): WsEvent => ({type: InternalEvents.ZOOM, minPxPerSec}),
-  destroy: (): WsEvent => ({type: InternalEvents.DESTROY}),
-  error: (error: string): WsEvent => ({type: InternalEvents.ERROR, error})
+  zoom: (minPxPerSec: number): WsMachineEvent => ({type: InternalEvents.ZOOM, minPxPerSec}),
+  destroy: (): WsMachineEvent => ({type: InternalEvents.DESTROY}),
+  error: (error: string): WsMachineEvent => ({type: InternalEvents.ERROR, error})
 };
 
 export const systemEvents = {
-  assignInstance: (waveSurfer: WaveSurfer): WsEvent => ({type: SystemEvents.ASSIGN_INSTANCE, waveSurfer})
+  assignInstance: (waveSurfer: WaveSurfer): WsMachineEvent => ({type: SystemEvents.ASSIGN_INSTANCE, waveSurfer})
 } as const;
 
 // User-initiated events
 export const waveSurferUserEvents = {
-  init: (container: HTMLElement | string, url: string): WsEvent => ({
+  init: (container: HTMLElement | string, url: string): WsMachineEvent => ({
     type: UserEvent.INIT,
     container,
     url
   }),
 
-  load: (url: string): WsEvent => ({
+  load: (url: string): WsMachineEvent => ({
     type: UserEvent.LOAD,
     url
   }),
 
-  play: (): WsEvent => ({
+  play: (): WsMachineEvent => ({
     type: UserEvent.PLAY
   }),
 
-  pause: (): WsEvent => ({
+  pause: (): WsMachineEvent => ({
     type: UserEvent.PAUSE
   }),
 
-  seek: (time: number): WsEvent => ({
+  seek: (time: number): WsMachineEvent => ({
     type: UserEvent.SEEK,
     time
   }),
 
-  zoom: (minPxPerSec: number): WsEvent => ({
+  zoom: (minPxPerSec: number): WsMachineEvent => ({
     type: UserEvent.ZOOM,
     minPxPerSec
   }),
 
-  destroy: (): WsEvent => ({
+  destroy: (): WsMachineEvent => ({
     type: UserEvent.DESTROY
   }),
 
-  setVolume: (volume: number): WsEvent => ({
+  setVolume: (volume: number): WsMachineEvent => ({
     type: UserEvent.SET_VOLUME,
     volume
   }),
 
-  setPlaybackRate: (rate: number): WsEvent => ({
+  setPlaybackRate: (rate: number): WsMachineEvent => ({
     type: UserEvent.SET_PLAYBACK_RATE,
     rate
   }),
 
-  setTrackHeight: (height: number): WsEvent => ({
+  setTrackHeight: (height: number): WsMachineEvent => ({
     type: UserEvent.SET_TRACK_HEIGHT,
     height
   }),
 
-  setContainer: (container: HTMLElement | string): WsEvent => ({
+  setContainer: (container: HTMLElement | string): WsMachineEvent => ({
     type: UserEvent.SET_CONTAINER,
     container
   }),
 
-  setUrl: (url: string): WsEvent => ({
+  setUrl: (url: string): WsMachineEvent => ({
     type: UserEvent.SET_URL,
     url
   })

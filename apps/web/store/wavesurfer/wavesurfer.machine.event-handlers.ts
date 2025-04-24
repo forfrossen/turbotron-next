@@ -1,10 +1,10 @@
 import {ActionFunction, MachineContext} from "xstate";
-import {InternalEvents, WaveSurferEventPayloads, WsEvent} from "./wavesurfer.machine.events";
+import {InternalEvents, WaveSurferEventPayloads, WsMachineEvent} from "./wavesurfer.machine.events";
 
 type InternalEventHandlers<TContext extends MachineContext> = {
   [K in keyof WaveSurferEventPayloads as K extends keyof typeof InternalEvents ? K : never]?: ActionFunction<
     TContext,
-    Extract<WsEvent, {type: K}>,
+    Extract<WsMachineEvent, {type: K}>,
     any,
     any,
     any,

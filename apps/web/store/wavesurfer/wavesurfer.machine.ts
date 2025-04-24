@@ -2,27 +2,20 @@
 
 import {
   assignContainer,
-  assignError,
   assignInstance,
-  assignLoadingProgress,
-  assignTimeUpdate,
   assignUrl,
-  destroyWaveSurfer,
-  pausePlayback,
-  seekTo,
-  setPlaybackRate,
-  setTrackHeight,
-  setVolume,
-  startPlayback
+  WsMachineAction,
+  WsMachineActions
 } from "@/store/wavesurfer/wavesurfer.actions";
 import {createWaveSurferActor} from "@/store/wavesurfer/wavesurfer.actors/create-wavesurfer";
+import {waveSurferMachineActorsMap, WsMachineActor} from "@/store/wavesurfer/wavesurfer.actors/indext";
 import {setupEventListenersActor} from "@/store/wavesurfer/wavesurfer.actors/setup-event-handlers";
 import {atomWithMachine} from "jotai-xstate";
 import WaveSurfer from "wavesurfer.js";
-import {assign, setup} from "xstate";
-import {InternalEvents, SystemEvents, UserEvent, WsEvent} from "./wavesurfer.machine.events";
+import {assign, MachineConfig, setup} from "xstate";
+import {InternalEvents, SystemEvents, UserEvent, WsMachineEvent} from "./wavesurfer.machine.events";
 
-export interface wsMachineContext {
+export interface WsMachineContext {
   error?: string;
   waveSurfer?: WaveSurfer | null;
   duration?: number;
@@ -34,34 +27,66 @@ export interface wsMachineContext {
   wsEventListenerRef?: any;
 }
 
-export const createWaveSurferMachine = () =>
-  setup({
-    types: {
-      context: {} as wsMachineContext,
-      events: {} as WsEvent
-    },
-    actions: {
-      assignError: assign(assignError),
-      clearError: assign({error: undefined}),
-      assignLoadingProgress: assign(assignLoadingProgress),
-      assignTimeUpdate: assign(assignTimeUpdate),
-      setContainer: assign(assignContainer),
-      setUrl: assign(assignUrl),
-      play: startPlayback,
-      pause: pausePlayback,
-      assignInstance,
-      seekTo,
-      setVolume,
-      setPlaybackRate,
-      destroyWaveSurfer,
-      setTrackHeight
-    },
+export const createWaveSurferMachineSetup = setup({
+  types: {} as {
+    context: WsMachineContext;
+    events: WsMachineEvent;
+    actions: WsMachineAction;
+    actors: WsMachineActor;
+  },
 
-    actors: {
-      createWaveSurferActor: createWaveSurferActor,
-      setupEventHandlersActor: setupEventListenersActor
+  actions: WsMachineActions,
+  actors: waveSurferMachineActorsMap
+});
+
+const machineConfig: MachineConfig<WsMachineContext, any, any> = {
+  id: "waveSurfer",
+  initial: "idle",
+  context: {
+    error: undefined,
+    loadingProgress: undefined,
+    waveSurfer: null,
+    container: "",
+    url: undefined,
+    timeUpdateRate: 10
+  },
+  states: {
+    idle: {},
+    initializing: {},
+    loading: {},
+    ready: {},
+    playing: {},
+    paused: {},
+    error: {}
+  }
+};
+
+if (machineConfig.states) {
+  machineConfig.states.initializing = {
+    initial: "wsInstanceCreation",
+    states: {
+      wsInstanceCreation: {
+        invoke: {
+          src: createWaveSurferActor,
+          input: ({context, event}) => ({context, event}),
+          onDone: {
+            target: "eventListenerCreation",
+            actions: assign({
+              waveSurfer: ({event}) => event.output as WaveSurfer
+            })
+          },
+          onError: {
+            target: "#waveSurfer.error",
+            actions: "assignError"
+          }
+        }
+      }
     }
-  }).createMachine({
+  };
+}
+
+export const createWaveSurferMachine = () =>
+  createWaveSurferMachineSetup.createMachine({
     id: "waveSurfer",
     initial: "idle",
     context: {
@@ -107,10 +132,10 @@ export const createWaveSurferMachine = () =>
       loading: {},
       ready: {},
       playing: {
-        entry: [{type: "play", params: {context: (context: wsMachineContext) => context}}]
+        entry: [{type: "play", params: {context: (context: WsMachineContext) => context}}]
       },
       paused: {
-        entry: [{type: "pause", params: {context: (context: wsMachineContext) => context}}]
+        entry: [{type: "pause", params: {context: (context: WsMachineContext) => context}}]
       },
       error: {}
     },
